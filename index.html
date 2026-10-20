@@ -1,0 +1,1898 @@
+<!doctype html><html lang="en" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark light"><meta name="description" content="Az Game Search, Game Theory &amp; Social Choice Lab"><title>Az Game Search, Game Theory &amp; Social Choice Lab</title>
+<style>
+:root{color-scheme:dark;--bg:#111722;--panel:#192230;--panel2:#202b3a;--panel3:#141c27;--line:#2c394b;--line2:#3b4b61;--text:#e8eef7;--muted:#a7b4c7;--subtle:#8190a5;--accent:#8ab4f8;--strong:#c9ddff;--good:#9ed7bd;--warn:#edc477;--bad:#ff929e;--shadow:none;--radius:13px}
+:root[data-theme=light]{color-scheme:light;--bg:#f4f6f8;--panel:#fff;--panel2:#f7f9fb;--panel3:#f0f4f8;--line:#dce2e9;--line2:#cbd4df;--text:#17212d;--muted:#596a7e;--subtle:#718197;--accent:#315fa2;--strong:#244a82;--good:#176b4c;--warn:#8c5c04;--bad:#b33143;--shadow:0 8px 24px rgba(20,35,50,.05)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}button,input,select,textarea{font:inherit}button,a,select{touch-action:manipulation}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}a{color:var(--accent);text-decoration:none}.muted{color:var(--muted)}.mono,code,pre,textarea{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+.topbar{height:64px;position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:18px;padding:0 22px;background:var(--bg);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;color:var(--text)}.brand-mark{width:34px;height:34px;border:1px solid var(--line2);border-radius:10px;background:var(--panel2);display:grid;place-items:center;color:var(--strong);font-weight:850;font-size:15px}.brand strong{display:block;font-size:14px;line-height:1.2}.brand small{display:block;font-size:10px;letter-spacing:.14em;color:var(--muted);margin-top:2px}
+.top-meta{flex:1;color:var(--subtle);font-size:12px;letter-spacing:.02em}
+.top-actions{display:flex;align-items:center;gap:7px}.top-actions label{font-size:11px;color:var(--muted)}
+select,.btn{border:1px solid var(--line2);background:var(--panel3);color:var(--text);border-radius:8px;padding:8px 11px;font-size:12px}.btn{font-weight:600;white-space:nowrap}.btn:hover{border-color:var(--accent);color:var(--strong)}.btn.primary{background:var(--accent);color:#10203a;border-color:var(--accent)}:root[data-theme=light] .btn.primary{color:white}
+.layout{display:grid;grid-template-columns:264px minmax(420px,1fr);max-width:1500px;margin:auto;min-height:calc(100vh - 64px)}
+.sidebar{position:sticky;top:64px;height:calc(100vh - 64px);overflow:auto;border-right:1px solid var(--line);padding:20px 14px;display:flex;flex-direction:column}
+.side-title{display:flex;justify-content:space-between;color:var(--subtle);font-size:10px;letter-spacing:.14em;font-weight:800;padding:0 4px 12px}
+.pill,.tag{border:1px solid var(--line2);border-radius:6px;padding:3px 7px;font-size:10px;color:var(--muted);white-space:nowrap}
+.search{display:flex;gap:7px;align-items:center;border:1px solid var(--line);border-radius:9px;background:var(--panel3);height:39px;padding:0 10px;margin-bottom:10px}
+.search input{min-width:0;width:100%;background:transparent;border:0;outline:0;color:var(--text);font-size:12px}
+.search kbd{border:1px solid var(--line);border-radius:4px;padding:1px 5px;color:var(--subtle);font-size:10px}
+.filter{display:block;color:var(--subtle);font-size:11px;margin-bottom:12px}.filter select{display:block;width:100%;max-width:none;margin-top:5px;padding:7px}
+.tree{display:flex;flex-direction:column;gap:12px}
+.group-label{display:flex;justify-content:space-between;color:var(--subtle);font-size:10px;font-weight:800;letter-spacing:.08em;padding:4px 5px}
+.link{width:100%;text-align:left;display:flex;gap:8px;align-items:center;background:transparent;border:1px solid transparent;color:var(--muted);padding:7px 8px;border-radius:8px;min-height:34px}
+.link .num{font:10px ui-monospace,monospace;color:var(--subtle);width:19px;flex:none}
+.link .name{font-size:12px;flex:1}.link .done{color:var(--good)}
+.link:hover{background:var(--panel2);color:var(--text)}
+.link.active{background:var(--panel2);border-color:var(--line2);color:var(--strong)}
+.side-foot{margin-top:auto;border-top:1px solid var(--line);padding-top:14px}
+.progress-row{display:flex;justify-content:space-between;color:var(--subtle);font-size:11px;margin-bottom:7px}
+.progress{height:5px;background:var(--panel2);border-radius:9px;overflow:hidden}.progress>div{height:100%;width:0;background:var(--accent);transition:width .25s}
+.side-actions{display:flex;gap:6px;margin-top:12px}.side-actions .btn{flex:1;padding:7px;font-size:11px}
+main{max-width:920px;width:100%;min-width:0;margin:auto;padding:28px 30px 40px}
+.breadcrumb{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--subtle);margin-bottom:16px}
+.header{padding:2px 2px 22px;border-bottom:1px solid var(--line);margin-bottom:20px}
+.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.13em;font-weight:800;color:var(--accent);margin-bottom:9px}
+.header h1{font-size:clamp(27px,3vw,36px);line-height:1.12;letter-spacing:-.035em;margin:0 0 10px;font-weight:700}
+.header p{font-size:14.5px;color:var(--muted);margin:0 0 14px;max-width:740px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag.good{color:var(--good)}.tag.warn{color:var(--warn)}
+.header-actions{display:flex;gap:7px;margin-top:16px;flex-wrap:wrap}
+.panel{border:1px solid var(--line);background:var(--panel);border-radius:var(--radius);overflow:hidden;margin-bottom:16px;box-shadow:var(--shadow)}
+.panel-head{padding:18px 20px 0}.panel-head h2{font-size:15px;margin:0 0 4px;letter-spacing:-.01em;font-weight:650}.panel-head p{font-size:12.5px;color:var(--muted);margin:0}
+.body{padding:16px 20px 20px}
+.idea{display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:20px}
+.idea p{font-size:13.5px;color:var(--muted);margin:0 0 13px}
+.mental{background:var(--panel3);border:1px solid var(--line);border-radius:10px;padding:13px}
+.mental small{color:var(--subtle);font-size:10px;letter-spacing:.11em;text-transform:uppercase}
+.mental strong{display:block;margin:6px 0;font-size:13px;color:var(--strong)}
+.mental p{font-size:12px;color:var(--muted);margin:0}
+.takeaway{padding:11px 13px;border:1px solid var(--line2);background:var(--panel3);border-radius:8px;color:var(--strong);font-size:12.5px;line-height:1.6}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.mini{background:var(--panel3);border:1px solid var(--line);border-radius:10px;padding:13px}
+.mini h3{font-size:12px;margin:0 0 7px;font-weight:650}
+.mini p{font-size:12.5px;color:var(--muted);margin:0;line-height:1.6}
+.steps{counter-reset:s;list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:9px}
+.steps li{counter-increment:s;display:flex;gap:10px;color:var(--muted);font-size:12.5px;line-height:1.55}
+.steps li:before{content:counter(s);width:23px;height:23px;flex:none;display:grid;place-items:center;border:1px solid var(--line2);background:var(--panel3);border-radius:6px;color:var(--accent);font:11px ui-monospace,monospace}
+.pseudo{white-space:pre-wrap;overflow:auto;background:var(--panel3);border:1px solid var(--line);border-radius:10px;padding:14px;font:12px/1.75 ui-monospace,monospace;color:var(--strong);margin:0}
+.table-wrap{overflow:auto}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+th,td{border-bottom:1px solid var(--line);text-align:left;padding:9px 10px;vertical-align:top}
+th{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--subtle);font-weight:700}
+td{color:var(--muted)}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tile{padding:12px;background:var(--panel3);border:1px solid var(--line);border-radius:9px}
+.tile span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--subtle)}
+.tile strong{display:block;color:var(--strong);font:700 14px ui-monospace,monospace;margin-top:6px}
+.tile small{font-size:10.5px;color:var(--muted);display:block;margin-top:2px}
+.notice{padding:12px 13px;background:var(--panel3);border:1px solid color-mix(in srgb,var(--warn) 35%,var(--line));border-radius:9px;font-size:12.5px;color:var(--muted);line-height:1.65}
+.notice strong{color:var(--warn)}
+.notice.info{border-color:var(--line2)}.notice.info strong{color:var(--accent)}
+.lab-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.lab-top label{font-size:11.5px;color:var(--muted)}
+.lab-input{width:100%;min-height:80px;resize:vertical;background:var(--panel3);border:1px solid var(--line2);border-radius:9px;padding:11px;color:var(--text);font:12px/1.65 ui-monospace,monospace;margin:11px 0}
+.lab-output{padding:13px;background:var(--panel3);border:1px solid var(--line);border-radius:9px;min-height:70px;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--strong);font:12px/1.75 ui-monospace,monospace;overflow-x:auto}
+.lab-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.label{font-size:10px;color:var(--subtle);font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px}
+.code-head{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:11px 13px;background:var(--panel3);border-bottom:1px solid var(--line)}
+.code-editor{display:block;width:100%;min-height:220px;resize:vertical;border:0;border-radius:0;background:var(--panel3);color:var(--text);padding:15px;font:12px/1.7 ui-monospace,monospace;outline:0}
+.code-foot{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:9px 13px;color:var(--subtle);font-size:10px;border-top:1px solid var(--line)}
+.practice{border:1px solid var(--line);background:var(--panel3);border-radius:9px;padding:13px}
+.practice summary{cursor:pointer;font-size:12.5px;font-weight:600}
+.practice p{font-size:12.5px;color:var(--muted);margin:10px 0 0;line-height:1.65}
+.references{display:flex;flex-direction:column;gap:8px}
+.references a{font-size:12.5px;overflow-wrap:anywhere}
+.home-hero{padding:30px;background:linear-gradient(150deg,var(--panel),var(--panel3));border:1px solid var(--line);border-radius:14px;margin-bottom:16px}
+.home-hero h1{font-size:clamp(30px,3.6vw,42px);line-height:1.1;letter-spacing:-.04em;margin:8px 0 14px;font-weight:700}
+.home-hero p{color:var(--muted);font-size:14px;max-width:720px;margin:0 0 18px;line-height:1.65}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+.stat strong{display:block;font:700 22px ui-monospace,monospace;color:var(--strong)}
+.stat span{display:block;font-size:10.5px;color:var(--muted);margin-top:3px}
+.chapter-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chapter-card{padding:14px;text-align:left;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--text)}
+.chapter-card:hover{border-color:var(--accent)}
+.chapter-card .num{font-size:10px;color:var(--accent);letter-spacing:.09em;font-weight:800}
+.chapter-card strong{display:block;font-size:13px;margin:5px 0;font-weight:650}
+.chapter-card p{font-size:11.5px;color:var(--muted);margin:0;line-height:1.55}
+.toast{position:fixed;z-index:99;bottom:20px;left:50%;transform:translate(-50%,10px);opacity:0;pointer-events:none;background:var(--panel);border:1px solid var(--line2);border-radius:9px;padding:11px 15px;box-shadow:var(--shadow);font-size:12px;transition:opacity .14s,transform .14s}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.footer{font-size:10.5px;color:var(--subtle);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:6px 2px 14px;align-items:center}
+.plot{width:100%;height:auto;display:block;background:var(--bg);border:1px solid var(--line);border-radius:8px;margin:6px 0}
+.matrix-table td,.matrix-table th{text-align:center;font-family:ui-monospace,monospace}
+@media(max-width:1080px){.layout{grid-template-columns:240px minmax(360px,1fr)}main{padding:24px 22px 36px}}
+@media(max-width:840px){.topbar{height:auto;min-height:60px;flex-wrap:wrap;gap:10px;padding:10px 14px}.top-meta{display:none}.top-actions{margin-left:auto}.top-actions label{display:none}.layout{display:block}.sidebar{position:static;height:auto;max-height:none;border:0;border-bottom:1px solid var(--line);padding:14px}.tree{max-height:260px;overflow:auto}.side-foot{display:none}main{padding:20px 15px 32px}.idea{grid-template-columns:1fr}.mental{order:-1}.stats{grid-template-columns:1fr 1fr}.chapter-cards,.two,.lab-cols{grid-template-columns:1fr}}
+@media(max-width:520px){.brand small{display:none}.brand-mark{width:30px;height:30px}.brand strong{font-size:12px}.top-actions select{max-width:92px;padding:6px;font-size:10px}.top-actions .btn{padding:6px 8px;font-size:10px}.chapter-cards{grid-template-columns:1fr}.tiles{grid-template-columns:1fr}.home-hero{padding:20px}.home-hero h1{font-size:30px}.header h1{font-size:27px}.body,.panel-head{padding-left:15px;padding-right:15px}.footer{display:block}.footer span{display:block;margin-bottom:6px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
+@media print{.topbar,.sidebar,.header-actions,.lab-top,.btn,.toast{display:none!important}.layout{display:block}main{padding:0;max-width:none}.panel,.home-hero{break-inside:avoid;box-shadow:none}body{background:#fff;color:#111}}
+</style></head><body>
+
+<header class="topbar">
+  <a class="brand" href="#home" id="homeLink"><span class="brand-mark">Az</span><span><strong>Az Game Search, Game Theory &amp; Social Choice Lab</strong><small>GAME SEARCH · EQUILIBRIA · SOCIAL CHOICE</small></span></a>
+  <div class="top-meta" id="catalogCount"></div>
+  <div class="top-actions">
+    <label for="themeSelect">Theme</label>
+    <select id="themeSelect" aria-label="Theme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select>
+    <button class="btn" id="printBtn">Print / PDF</button>
+    <button class="btn" id="exportBtn">Export</button>
+    <button class="btn" id="importBtn">Import</button>
+    <input type="file" id="importFile" accept="application/json,.json" hidden>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" aria-label="Course navigation">
+    <div class="side-title"><span>COURSE CATALOG</span><span class="pill" id="lessonCount">0</span></div>
+    <div class="search"><span>⌕</span><input id="searchInput" type="search" placeholder="Search game search, game theory…" aria-label="Search lessons"><kbd>/</kbd></div>
+    <label class="filter">Chapter<select id="chapterFilter"><option value="all">All chapters</option></select></label>
+    <nav class="tree" id="courseTree" aria-label="Lessons"></nav>
+    <div class="side-foot">
+      <div class="progress-row"><span>COURSE PROGRESS</span><strong id="progressText">0 / 0</strong></div>
+      <div class="progress" id="progressBar"><div id="progressFill"></div></div>
+      <div class="side-actions"><button class="btn" data-page="home">Home</button><button class="btn" data-page="progress">Progress</button></div>
+    </div>
+  </aside>
+  <main id="mainView" tabindex="-1" aria-live="polite"></main>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ============================================================
+   Az Game Search, Game Theory & Social Choice Lab
+   ============================================================ */
+const CHAPTERS=[
+ {id:"g-foundations",title:"1 Game foundations",desc:"State spaces, legal moves, utility, minimax, negamax, terminal states.",ids:["game-state","minimax-negamax"]},
+ {id:"g-pruning",title:"2 Pruning and evaluation",desc:"Alpha-beta pruning, move ordering, iterative deepening, transposition tables.",ids:["alpha-beta","move-ordering","transposition-tables"]},
+ {id:"g-deeper",title:"3 Deeper search methods",desc:"Quiescence search, null-move pruning, killer heuristic, principal variation search, MTD(f).",ids:["quiescence-nullmove","pvs-killer","mtdf"]},
+ {id:"g-heuristic",title:"4 Heuristic and proof search",desc:"Monte Carlo tree search, UCT, proof-number search, endgame tablebases.",ids:["mcts-uct","proof-number","endgame-tablebases"]},
+ {id:"g-combinatorial",title:"5 Combinatorial games",desc:"Nim, Sprague-Grundy theorem, impartial games, misère play.",ids:["nim","sprague-grundy","misere"]},
+ {id:"g-strategic",title:"6 Strategic games and equilibria",desc:"Nash equilibrium, minimax theorem, Lemke-Howson, regret matching, multiplicative weights.",ids:["nash-equilibrium","minimax-theorem","lemke-howson","regret-matching"]},
+ {id:"g-systems",title:"7 Game-playing systems",desc:"Self-play, policy/value networks, AlphaZero, MuZero, Libratus, Pluribus.",ids:["self-play","alphazero","muzero","poker-ai"]},
+ {id:"g-cooperative",title:"8 Cooperative games and mechanism design",desc:"Shapley value, nucleolus, VCG auctions, generalized second price, top trading cycles.",ids:["shapley","nucleolus","vcg","gsp","ttc"]},
+ {id:"g-voting",title:"9 Voting and fair division",desc:"Borda, Condorcet, Schulze, instant-runoff voting, cut-and-choose, Adjusted Winner.",ids:["borda","condorcet-schulze","irv","fair-division"]}
+];
+
+const D={
+ kind:"Concept",status:"Concept lesson",level:2,demo:"none",demoTitle:"Interactive teaching lab",refs:[],codeKey:"none",
+ input:"A game, mechanism or voting instance described in a simple text format.",
+ output:"An optimal move, an equilibrium, an allocation, a ranking or a proof of a property.",
+ invariant:"Correctness relies on the mathematical property the method exploits. Breaking it gives wrong answers without an error.",
+ complexity:["Depends on the state space or dimension","Depends on the representation","Measure on representative instances"],
+ uses:"Use this as one layer inside a larger game-theoretic or social-choice pipeline.",
+ strength:"Fits the problem it was designed for when its assumptions hold.",
+ limits:"Depends on the structure of the game, dimension and data distribution.",
+ pitfall:"A method that works on small toy problems can fail or become impractical at scale. Always verify assumptions.",
+ question:"What is the main idea of this lesson?",
+ trace:null
+};
+function mk(o){
+ const steps=o.steps||["Read the input.","Apply the method.","Produce the result.","Check correctness."];
+ return Object.assign({},D,{
+  summary:o.summary||"",
+  mental:o.mental||o.title,
+  mentalText:o.mentalText||o.summary||"",
+  problem:o.problem||("How does "+o.title+" work and when is it the right choice?"),
+  steps:steps,
+  trace:o.trace||steps.map((s,i)=>["Step "+(i+1),s,i===steps.length-1?"Verified":"Step done"]),
+  answer:o.answer||o.summary||"",
+  pseudo:o.pseudo||"",
+  sample:o.sample||"",
+  level:o.level||2
+ },o);
+}
+
+const RAW=[
+/* ================= 1 Game foundations ================= */
+{id:"game-state",title:"Game state spaces and legal moves",level:2,kind:"Foundation",status:"Runnable teaching lab",
+ summary:"A game is defined by its states, the legal moves from each state, whose turn it is, and a utility function on terminal states. This formal model is the base for every search algorithm in this chapter.",
+ mental:"A graph of positions connected by moves",
+ mentalText:"Every position is a node. Every legal move is an edge. The game tree is the unrolling of this graph from the start.",
+ steps:["Define the state representation.","List the legal moves from a state.","Identify terminal states and their utilities.","Build the game tree by unrolling."],
+ pseudo:"State space: set of positions\nLegal(s): moves available at state s\nPlayer(s): whose turn\nTerminal(s): true if no moves\nUtility(s, p): payoff to player p at terminal s\n\nZero-sum: Utility(s, A) = -Utility(s, B)\n\nExample: tic-tac-toe\n  state: 9 cells with X, O or empty\n  legal: empty cells\n  terminal: three in a row, or full board\n  utility: +1 win for X, -1 win for O, 0 draw",
+ invariant:"The state must include every piece of information that affects future play, including whose turn it is.",
+ uses:"Any two-player perfect-information game. The state space bounds the search.",
+ strength:"Simple, universal. Every search algorithm operates on this model.",
+ limits:"State space grows exponentially with game length.",
+ pitfall:"Forgetting whose turn it is. Two positions with the same board but different turns are different states.",
+ question:"How many legal tic-tac-toe positions are reachable?",
+ answer:"About 5,478 legal positions. The full game tree has 255,168 leaf nodes.",
+ demo:"game-state",sample:"",refs:[
+  ["von Neumann and Morgenstern, Theory of Games and Economic Behavior, 1944","https://press.princeton.edu/books/paperback/9780691130613/theory-of-games-and-economic-behavior"],
+  ["Russell and Norvig, AI: A Modern Approach, Chapter 5","https://aima.cs.berkeley.edu/"],
+  ["Luger, Artificial Intelligence, Chapter 6","https://www.pearson.com/en-us/subject-catalog/p/artificial-intelligence/P200000003409"]]},
+{id:"minimax-negamax",title:"Minimax, negamax and terminal states",level:3,kind:"Foundation",status:"Runnable teaching lab",
+ summary:"Minimax assumes both players play optimally and chooses the move that maximizes the worst-case outcome. Negamax is the zero-sum specialization where one player's value is the negation of the other's.",
+ mental:"Assume the opponent plays perfectly and pick the best worst case",
+ mentalText:"Recursively score every position from the leaves upward. At MAX nodes take the maximum; at MIN nodes take the minimum. The root value is the game value.",
+ steps:["Score terminal states with the utility.","At a MAX node, take the max of the children.","At a MIN node, take the min of the children.","Return the root value and the move that achieves it."],
+ pseudo:"minimax(state, maximizing):\n  if terminal(state): return utility(state)\n  if maximizing:\n    return max over moves of minimax(child, False)\n  else:\n    return min over moves of minimax(child, True)\n\nnegamax(state, player):\n  if terminal(state): return player * utility(state)\n  best = -infinity\n  for child in children(state):\n    best = max(best, -negamax(child, -player))\n  return best\n\nNegamax relies on the zero-sum property:\n  value to player A = -value to player B",
+ invariant:"The value of a position is well defined only if both players play optimally from that position onward.",
+ uses:"Chess, checkers, tic-tac-toe, any two-player perfect-information zero-sum game.",
+ strength:"Exact value. Simple recursion.",
+ limits:"Exponential without pruning. Only for small game trees.",
+ pitfall:"Negamax silently assumes a zero-sum game. For non-zero-sum games you need a different formulation.",
+ question:"What is the value of an empty tic-tac-toe board with optimal play?",
+ answer:"0 (a draw). The game is a draw with optimal play.",
+ demo:"minimax",sample:".........",refs:[
+  ["von Neumann and Morgenstern, Theory of Games and Economic Behavior, 1944","https://press.princeton.edu/books/paperback/9780691130613/theory-of-games-and-economic-behavior"],
+  ["Knuth and Moore, An analysis of alpha-beta pruning, Artificial Intelligence 1975","https://doi.org/10.1016/0004-3702(75)90019-3"],
+  ["Russell and Norvig, AI: A Modern Approach, Chapter 5","https://aima.cs.berkeley.edu/"]]},
+/* ================= 2 Pruning and evaluation ================= */
+{id:"alpha-beta",title:"Alpha-beta pruning",level:3,kind:"Pruning",status:"Runnable teaching lab",
+ summary:"Alpha-beta returns the same value as minimax while pruning branches that cannot influence the result. With perfect move ordering it visits O(b^(d/2)) nodes instead of O(b^d).",
+ mental:"Stop looking when a branch is already refuted",
+ mentalText:"Keep a window [alpha, beta]. If a node's value falls outside the window, the parent will never choose it, so stop exploring it.",
+ steps:["Initialize alpha = -infinity, beta = +infinity.","At a MAX node, update alpha with each child.","If alpha >= beta, prune (cut off remaining children).","At a MIN node, update beta with each child.","If alpha >= beta, prune."],
+ pseudo:"alpha_beta(state, depth, alpha, beta, maximizing):\n  if depth == 0 or terminal(state):\n    return evaluate(state)\n  if maximizing:\n    value = -infinity\n    for child in children(state):\n      value = max(value, alpha_beta(child, depth-1, alpha, beta, False))\n      alpha = max(alpha, value)\n      if alpha >= beta: break   # beta cutoff\n    return value\n  else:\n    value = +infinity\n    for child in children(state):\n      value = min(value, alpha_beta(child, depth-1, alpha, beta, True))\n      beta = min(beta, value)\n      if alpha >= beta: break   # alpha cutoff\n    return value\n\nBest case (perfect ordering): O(b^(d/2))\nWorst case (no ordering): O(b^d)",
+ invariant:"Pruning is safe only if the pruned branch cannot change the value at any ancestor.",
+ uses:"Every modern game engine. Also in general minimax search.",
+ strength:"Same result as minimax with far fewer nodes.",
+ limits:"Speedup depends on move ordering. Random ordering gives little pruning.",
+ pitfall:"Pruning the wrong branch changes the value. The alpha-beta window must be maintained correctly at every node.",
+ question:"With perfect ordering, how many nodes does alpha-beta visit compared to minimax?",
+ answer:"O(b^(d/2)) instead of O(b^d). This effectively doubles the searchable depth.",
+ demo:"alpha-beta",sample:"4 3 7",refs:[
+  ["Knuth and Moore, An analysis of alpha-beta pruning, Artificial Intelligence 1975","https://doi.org/10.1016/0004-3702(75)90019-3"],
+  ["Russell and Norvig, AI: A Modern Approach, Section 5.3","https://aima.cs.berkeley.edu/"],
+  ["Pearl, Heuristics: Intelligent Search Strategies for Computer Problem Solving, 1984","https://www.pearson.com/en-us/subject-catalog/p/heuristics-intelligent-search-strategies-for-computer-problem-solving/P200000003299"]]},
+{id:"move-ordering",title:"Move ordering and iterative deepening",level:4,kind:"Pruning",status:"Runnable teaching lab",
+ summary:"Alpha-beta prunes more when good moves are tried first. Move ordering heuristics (killer moves, history, MVV-LVA) make pruning effective. Iterative deepening searches depth 1, 2, 3, ... and reuses the best move from the previous depth to order the next.",
+ mental:"Try the best move first so the opponent can refute quickly",
+ mentalText:"If a strong move is searched first, its value raises alpha or lowers beta, and the remaining moves are cut off. Iterative deepening provides good ordering almost for free.",
+ steps:["Search depth 1, get the best move.","At depth 2, try the best move from depth 1 first.","Continue increasing depth.","Use the previous best move, killer moves and history to order children."],
+ pseudo:"iterative_deepening(state, max_depth):\n  best_move = None\n  for depth in 1..max_depth:\n    score, best = alpha_beta_root(state, depth, best_move)\n    best_move = best\n    if time_up: break\n  return best_move\n\nOrdering heuristics:\n  - previous best move (PV move)\n  - captures: MVV-LVA (most valuable victim, least valuable attacker)\n  - killer moves: quiet moves that caused a cutoff at the same depth\n  - history heuristic: quiet moves that caused cutoffs in the past\n  - transposition table move",
+ invariant:"Ordering is a heuristic. It cannot change the value of alpha-beta, only the number of nodes visited.",
+ uses:"Any alpha-beta engine. Iterative deepening also gives anytime behavior.",
+ strength:"Large node reductions with simple heuristics.",
+ limits:"Ordering heuristics can be wrong and waste effort. Killer and history tables need maintenance.",
+ pitfall:"Iterative deepening is not wasteful: the cost of shallow searches is dominated by the cost of the deepest search.",
+ question:"Why is iterative deepening not a waste of time?",
+ answer:"The number of nodes grows geometrically with depth, so the deepest search dominates the total. The shallow searches are almost free and provide good move ordering.",
+ demo:"move-ordering",sample:"4 3 7",refs:[
+  ["Knuth and Moore, An analysis of alpha-beta pruning, 1975","https://doi.org/10.1016/0004-3702(75)90019-3"],
+  ["Reinefeld, An improvement to the Scout tree search algorithm, ICCA Journal 1983","https://doi.org/10.3233/ICG-1983-6407"],
+  ["Russell and Norvig, AI: A Modern Approach, Chapter 5","https://aima.cs.berkeley.edu/"]]},
+{id:"transposition-tables",title:"Transposition tables",level:4,kind:"Pruning",status:"Runnable teaching lab",
+ summary:"A transposition table caches the value of a state so that positions reached by different move orders are not re-searched. Zobrist hashing gives an efficient key.",
+ mental:"Cache the value of every position you have seen",
+ mentalText:"Many move orders lead to the same position. Store the result in a hash table keyed by the position. On revisit, return the cached value.",
+ steps:["Hash the state (Zobrist or similar).","Look up the hash in the table.","If stored with sufficient depth, return the value.","Otherwise search and store the result."],
+ pseudo:"transposition_table(state, depth, alpha, beta):\n  key = zobrist_hash(state)\n  entry = table.get(key)\n  if entry and entry.depth >= depth:\n    if entry.flag == EXACT: return entry.value\n    if entry.flag == LOWER and entry.value >= beta: return entry.value\n    if entry.flag == UPPER and entry.value <= alpha: return entry.value\n  value = alpha_beta(state, depth, alpha, beta)\n  flag = EXACT\n  if value <= alpha: flag = UPPER\n  elif value >= beta: flag = LOWER\n  table.put(key, {value, depth, flag})\n  return value\n\nZobrist hashing:\n  each piece-square pair gets a random 64-bit number\n  hash(state) = XOR of the numbers for all pieces on the board\n  update in O(1) when a piece moves",
+ invariant:"The table value must be valid for the current search window. Flags (EXACT, LOWER, UPPER) record which window the value is valid for.",
+ uses:"Chess, checkers, Go, any game with transpositions.",
+ strength:"Large savings when the game has many transpositions.",
+ limits:"Memory. Collisions with weak hashing. Table must be cleared or aged.",
+ pitfall:"Storing only the value without the depth or flag can return wrong results when the same position is searched at a different depth.",
+ question:"What is a transposition in a game tree?",
+ answer:"Reaching the same position through different sequences of moves. In chess this is common (e.g., Nf3 then d4 vs d4 then Nf3).",
+ demo:"transposition-tables",sample:"6 3",refs:[
+  ["Zobrist, A new hashing method with application for game playing, 1970","https://www.cs.wisc.edu/techreports/1970/TR88.pdf"],
+  ["Breuker, Memory versus search in games, Ph.D. thesis 1998","https://research.tilburguniversity.edu/en/publications/memory-versus-search-in-games"],
+  ["cp-algorithms.com, Zobrist hashing","https://cp-algorithms.com/algebra/zobrist-hashing.html"]]},
+/* ================= 3 Deeper search methods ================= */
+{id:"quiescence-nullmove",title:"Quiescence search and null-move pruning",level:5,kind:"Deep search",status:"Concept lesson",
+ summary:"Quiescence search extends the search at leaf nodes by looking only at forcing moves (captures, checks) to avoid the horizon effect. Null-move pruning skips a turn to get a quick lower bound.",
+ mental:"Do not stop in the middle of a tactical exchange",
+ mentalText:"A fixed-depth search can stop just before a capture, giving a misleading score. Quiescence keeps searching forcing moves until the position is quiet.",
+ steps:["At depth 0, instead of evaluating, run a quiescence search on forcing moves.","Null-move: give the opponent a free move; if the score is still too good, prune."],
+ pseudo:"quiescence(state, alpha, beta):\n  stand_pat = evaluate(state)\n  if stand_pat >= beta: return beta\n  if stand_pat > alpha: alpha = stand_pat\n  for move in forcing_moves(state):\n    score = -quiescence(apply(state, move), -beta, -alpha)\n    if score >= beta: return beta\n    if score > alpha: alpha = score\n  return alpha\n\nnull_move(state, depth, alpha, beta):\n  if depth >= 3 and not in_check(state) and has_non_pawn_material(state):\n    R = 2   # reduction\n    score = -alpha_beta(pass_turn(state), depth - 1 - R, -beta, -beta + 1)\n    if score >= beta: return beta\n  return alpha_beta(state, depth, alpha, beta)",
+ invariant:"Null-move pruning assumes zugzwang is rare. In zugzwang-heavy endgames it can be wrong.",
+ uses:"Chess engines (Stockfish, Komodo). Quiescence is in every serious chess engine.",
+ strength:"Avoids the horizon effect. Null-move gives large depth increases.",
+ limits:"Null-move can fail in zugzwang positions. Quiescence can explode without good ordering.",
+ pitfall:"Quiescence must include all forcing moves. Missing a check or capture can still miss tactics.",
+ question:"What is the horizon effect?",
+ answer:"A fixed-depth search stops before a critical event, producing a misleading evaluation. Quiescence search extends the search past the horizon for forcing moves.",
+ demo:"none",sample:"",refs:[
+  ["Beal, Experiments with the null-move heuristic, ICCA Journal 1989","https://doi.org/10.3233/ICG-1989-12403"],
+  ["Kaindl and Horacek, A practical null-move pruning scheme, 1995","https://doi.org/10.1007/BFb0029922"],
+  ["Chess Programming Wiki, Quiescence search","https://www.chessprogramming.org/Quiescence_Search"]]},
+{id:"pvs-killer",title:"Principal variation search and killer heuristic",level:5,kind:"Deep search",status:"Concept lesson",
+ summary:"PVS searches the first move with a full window and the rest with a null window, re-searching only if a move exceeds the first. Killer moves are quiet moves that caused cutoffs at the same depth and are tried early.",
+ mental:"Assume the first move is best and verify the rest cheaply",
+ mentalText:"Search the first move normally. For the others, search with a zero-width window. If one beats the first, re-search it with a full window.",
+ steps:["Search the first child with [alpha, beta].","For each remaining child, search with [alpha, alpha+1].","If the null-window search returns > alpha, re-search with [alpha, beta].","Store killer moves for use at the same depth."],
+ pseudo:"pvs(state, depth, alpha, beta):\n  if depth == 0: return evaluate(state)\n  first = True\n  for move in ordered_moves(state):\n    if first:\n      score = -pvs(apply(state, move), depth-1, -beta, -alpha)\n      first = False\n    else:\n      score = -pvs(apply(state, move), depth-1, -alpha-1, -alpha)\n      if alpha < score < beta:\n        score = -pvs(apply(state, move), depth-1, -beta, -alpha)\n    if score >= beta:\n      record_killer(depth, move)\n      return beta\n    if score > alpha: alpha = score\n  return alpha\n\nKiller heuristic:\n  for each depth, store 1-2 quiet moves that caused a cutoff\n  try them first at sibling nodes at the same depth",
+ invariant:"The null-window search is exact for fail-low results. A fail-high must be re-searched with a full window.",
+ uses:"Every modern chess and checkers engine.",
+ strength:"Fewer nodes than plain alpha-beta with good ordering.",
+ limits:"Re-searches can cost extra if the move ordering is poor.",
+ pitfall:"Forgetting the re-search can return a wrong value. The null window is only used for a quick verification.",
+ question:"What is a null window in PVS?",
+ answer:"A search window [alpha, alpha+1]. It only tells you whether the move is better than alpha, not by how much. If it is, a full re-search is needed.",
+ demo:"none",sample:"",refs:[
+  ["Marsland and Campbell, Parallel search of strongly ordered game trees, ACM Computing Surveys 1982","https://doi.org/10.1145/356893.356897"],
+  ["Reinefeld, An improvement to the Scout tree search algorithm, 1983","https://doi.org/10.3233/ICG-1983-6407"],
+  ["Chess Programming Wiki, Principal variation search","https://www.chessprogramming.org/Principal_Variation_Search"]]},
+{id:"mtdf",title:"MTD(f) and zero-window searches",level:5,kind:"Deep search",status:"Concept lesson",
+ summary:"MTD(f) drives a sequence of zero-window alpha-beta searches, using a transposition table to converge to the minimax value. Often faster than plain alpha-beta in chess.",
+ mental:"Binary search the game value with null-window searches",
+ mentalText:"Start with a guess. Search with a null window around the guess. The result tells you which side the true value is on. Update the guess and repeat.",
+ steps:["Initialize the guess g.","Search with window [g-1, g] (null window).","If the search fails high, the true value is >= g; raise the lower bound.","If it fails low, lower the upper bound.","Repeat until the bounds meet."],
+ pseudo:"mtdf(state, first_guess):\n  g = first_guess\n  lower = -infinity\n  upper = +infinity\n  while lower < upper:\n    beta = max(g, lower + 1)\n    g = alpha_beta(state, beta-1, beta)\n    if g < beta: upper = g\n    else: lower = g\n  return g\n\nThe transposition table stores the exact value once the window is narrow enough. MTD(f) exploits this heavily.",
+ invariant:"The null window must be handled correctly with the transposition table so the stored bounds remain valid.",
+ uses:"Chess engines, especially with large transposition tables.",
+ strength:"Fewer nodes than plain alpha-beta when the guess is good.",
+ limits:"Many null-window searches. Sensitive to the initial guess and the transposition table.",
+ pitfall:"Without a good transposition table, MTD(f) can be slower than plain alpha-beta.",
+ question:"Why does MTD(f) use null windows?",
+ answer:"A null window [beta-1, beta] only tells you whether the value is below or above beta. That is enough to binary search the value and it maximizes pruning.",
+ demo:"none",sample:"",refs:[
+  ["Plaat et al., Best-first fixed-depth minimax algorithms, Artificial Intelligence 1996","https://doi.org/10.1016/0004-3702(95)00082-8"],
+  ["Aske Plaat, MTD(f), a new search algorithm, 1996","https://askeplaat.wordpress.com/2016/04/27/mtd-f/"],
+  ["Chess Programming Wiki, MTD(f)","https://www.chessprogramming.org/MTD(f)"]]},
+/* ================= 4 Heuristic and proof search ================= */
+{id:"mcts-uct",title:"Monte Carlo tree search and UCT",level:4,kind:"Heuristic search",status:"Runnable teaching lab",
+ summary:"MCTS builds a search tree by sampling. Each iteration selects a promising node (UCT), expands it, simulates a random playout, and backpropagates the result. No evaluation function needed.",
+ mental:"Sample many random games and keep statistics on the best moves",
+ mentalText:"At each node, balance exploiting moves with high win rates and exploring moves with few visits. UCT formalizes this as an upper confidence bound.",
+ steps:["Selection: descend the tree using UCT until a leaf.","Expansion: add one child.","Simulation: play out randomly to a terminal state.","Backpropagation: update visit counts and win totals."],
+ pseudo:"uct_search(root, iterations):\n  for i in 1..iterations:\n    node = select(root)   # UCT\n    node = expand(node)\n    result = simulate(node)\n    backpropagate(node, result)\n  return best_child(root)\n\nUCT selection:\n  for each child c of node:\n    ucb(c) = Q(c)/N(c) + c_const * sqrt(ln N(node) / N(c))\n  pick child with max ucb\n\nQ = total reward, N = visit count\nc_const ~ sqrt(2) for rewards in [0,1]",
+ invariant:"UCT converges to the minimax value as the number of iterations grows.",
+ uses:"Go (AlphaGo), general game playing, planning, real-time strategy games.",
+ strength:"No evaluation function. Anytime. Works with huge branching factors.",
+ limits:"Slow when the game tree is deep and simulations are expensive.",
+ pitfall:"The exploration constant must be tuned. Too small and it converges to a suboptimal move.",
+ question:"What is the exploration constant c in UCT?",
+ answer:"A constant that balances exploitation (Q/N) and exploration (sqrt(ln N / N)). Common choice is sqrt(2) for rewards in [0,1].",
+ demo:"mcts-uct",sample:"1000 1.41",refs:[
+  ["Coulom, Efficient selectivity and backup operators in Monte-Carlo tree search, 2006","https://doi.org/10.1007/978-3-540-75538-8_7"],
+  ["Kocsis and Szepesvári, Bandit based Monte-Carlo planning, ECML 2006","https://doi.org/10.1007/11871842_29"],
+  ["Browne et al., A survey of Monte Carlo tree search methods, IEEE TCIAIG 2012","https://doi.org/10.1109/TCIAIG.2012.2186810"]]},
+{id:"proof-number",title:"Proof-number search and endgame tablebases",level:5,kind:"Proof search",status:"Concept lesson",
+ summary:"Proof-number search (PNS) is a best-first search for proving or disproving a game-theoretic claim. Endgame tablebases store exact values for all positions with a small number of pieces.",
+ mental:"Prove or disprove: search where the proof is closest",
+ mentalText:"Each node has a proof number (minimum leaves needed to prove it) and a disproof number (minimum needed to disprove it). Expand the most promising node.",
+ steps:["Assign proof and disproof numbers to leaves.","Propagate: proof(node) = min over children, disproof(node) = sum over children (for AND/OR nodes).","Expand the child with the smallest proof (or disproof) number.","Repeat until the root is proved or disproved."],
+ pseudo:"proof_number_search(root):\n  initialize pn, dn for all leaves\n  while root not proved or disproved:\n    node = select_most_proving(root)\n    expand(node)\n    update_pn_dn(node)\n  return root status\n\npn(node) = min over children pn(child)   (OR node)\ndn(node) = sum over children dn(child)  (OR node)\n\nFor AND nodes:\n  pn = sum, dn = min\n\nEndgame tablebases:\n  enumerate all positions with <= N pieces\n  compute win/draw/loss by retrograde analysis\n  store in a compact index (e.g., Syzygy, Nalimov)\n  Lomonosov: 7-piece chess tablebases (~140 TB)",
+ invariant:"Proof and disproof numbers are admissible: they never overestimate the true effort.",
+ uses:"Chess endgames, Connect Four, game solving, theorem proving.",
+ strength:"Finds proofs when they exist and are shallow.",
+ limits:"Memory for tablebases. PNS can be slow on deep proofs.",
+ pitfall:"Tablebases only cover positions with few pieces. Outside that range the engine must search.",
+ question:"How many pieces does the largest chess endgame tablebase cover?",
+ answer:"7 pieces (Lomonosov tablebases), stored in about 140 TB.",
+ demo:"none",sample:"",refs:[
+  ["Allis, Searching for solutions in games and artificial intelligence, Ph.D. thesis 1994","https://www.cs.uu.nl/research/techreps/repo/CS-1994/1994-29.pdf"],
+  ["Nagai, Proof-number search, 2002","https://www.sciencedirect.com/science/article/pii/S0004370201001411"],
+  ["Lutz, Das 7-Steine-Endspiel ist gelöst, 2012","https://ldm.silvertree.org/"]]},
+/* ================= 5 Combinatorial games ================= */
+{id:"nim",title:"Nim and the nim-sum",level:3,kind:"Combinatorial game",status:"Runnable teaching lab",
+ summary:"Nim is a two-player game with several heaps. Players alternately remove any number of objects from one heap. The player who takes the last object wins (normal play). The winning strategy is to make the XOR of heap sizes zero.",
+ mental:"The XOR of heap sizes tells you who wins",
+ mentalText:"If the XOR is zero, the player to move loses with optimal play. Otherwise there is a move that makes the XOR zero.",
+ steps:["Compute the XOR of all heap sizes.","If zero, the position is losing (P-position).","If nonzero, find a heap whose size XOR'd with the XOR is smaller.","Reduce that heap to the smaller value."],
+ pseudo:"nim_sum(heaps) = XOR of all heap sizes\n\nP-position (previous player wins):\n  nim_sum = 0\n\nN-position (next player wins):\n  nim_sum != 0\n\nWinning move:\n  find heap i with (heaps[i] XOR nim_sum) < heaps[i]\n  reduce heap i to heaps[i] XOR nim_sum",
+ invariant:"Nim is a P-position iff the XOR of heap sizes is zero. This is Bouton's theorem.",
+ uses:"Teaching combinatorial game theory. The Sprague-Grundy theorem generalizes nim-sum to any impartial game.",
+ strength:"Complete, simple characterization of all positions.",
+ limits:"Only for Nim. Other games need the Grundy numbers.",
+ pitfall:"Misère Nim has a different rule: if all heaps are size 1, the parity reverses. Otherwise the same nim-sum applies.",
+ question:"Is [3, 4, 5] a winning position?",
+ answer:"Yes. 3 XOR 4 XOR 5 = 2. Nonzero, so it is an N-position. Reduce heap 3 from 3 to 1 (3 XOR 2 = 1).",
+ demo:"nim",sample:"3 4 5",refs:[
+  ["Bouton, Nim, a game with a complete mathematical theory, Annals of Mathematics 1901","https://doi.org/10.2307/1967631"],
+  ["Berlekamp, Conway, Guy, Winning Ways for Your Mathematical Plays, 1982","https://www.routledge.com/Winning-Ways-for-Your-Mathematical-Plays/Berlekamp-Conway-Guy/p/book/9781568811307"],
+  ["Wikipedia, Nim","https://en.wikipedia.org/wiki/Nim"]]},
+{id:"sprague-grundy",title:"Sprague-Grundy theorem",level:4,kind:"Combinatorial game",status:"Runnable teaching lab",
+ summary:"Every impartial game under normal play is equivalent to a Nim heap. The size of the heap is the Grundy number (nimber) of the position, computed by mex of the Grundy numbers of the options.",
+ mental:"Every impartial game is a disguised Nim heap",
+ mentalText:"Compute the Grundy number of each position as the smallest non-negative integer not among the Grundy numbers of its options. The Grundy number of a sum of games is the XOR of the components.",
+ steps:["Identify the terminal positions (Grundy 0).","For each position, compute the set of Grundy numbers of its options.","Take the mex (smallest non-negative integer not in the set).","For a sum of games, XOR the Grundy numbers."],
+ pseudo:"grundy(state):\n  if terminal(state): return 0\n  reachable = set()\n  for move in moves(state):\n    reachable.add(grundy(apply(state, move)))\n  g = 0\n  while g in reachable: g += 1\n  return g\n\nSprague-Grundy theorem:\n  every impartial game is equivalent to a Nim heap of size grundy(state)\n  the sum of games has grundy = XOR of grundy values\n  the position is a P-position iff XOR = 0",
+ invariant:"The mex computation assumes normal play (last move wins). Misère play needs a different treatment.",
+ uses:"Any impartial game: Nim variants, subtraction games, Green Hackenbush, turning turtles.",
+ strength:"Completely solves any impartial game in polynomial time (in the number of positions).",
+ limits:"Only for impartial games. Partizan games (e.g., chess) need surreal numbers or other tools.",
+ pitfall:"The mex must be taken over the set of reachable Grundy numbers, not the set of moves.",
+ question:"What is the Grundy number of a subtraction game with moves {1, 2, 3}?",
+ answer:"G(0)=0, G(1)=1, G(2)=2, G(3)=3, G(4)=0, G(5)=1, ... It repeats with period 4.",
+ demo:"sprague-grundy",sample:"1 2 3\n20",refs:[
+  ["Sprague, Über mathematische Kampfspiele, 1935","https://doi.org/10.1007/BF01360633"],
+  ["Grundy, Mathematics and games, Eureka 1939","https://www.jstor.org/stable/3021666"],
+  ["Berlekamp, Conway, Guy, Winning Ways, 1982","https://www.routledge.com/Winning-Ways-for-Your-Mathematical-Plays/Berlekamp-Conway-Guy/p/book/9781568811307"]]},
+{id:"misere",title:"Misère play",level:4,kind:"Combinatorial game",status:"Runnable teaching lab",
+ summary:"In misère play, the player who makes the last move loses. Nim has a simple misère strategy: if all heaps are size 1, parity decides; otherwise play like normal Nim.",
+ mental:"Last move loses instead of wins",
+ mentalText:"The entire theory changes. For Nim, if all heaps have size 1, the parity of the number of heaps decides the winner. Otherwise the normal nim-sum still applies.",
+ steps:["Check if all heaps have size 1.","If yes, the position is a P-position iff the number of heaps is odd.","Otherwise, compute the nim-sum. P-position iff nim-sum = 0."],
+ pseudo:"misere_nim(heaps):\n  if all(h <= 1 for h in heaps):\n    return 'P-position' if len(heaps) % 2 == 1 else 'N-position'\n  else:\n    return 'P-position' if nim_sum(heaps) == 0 else 'N-position'\n\nIntuition:\n  with all 1s, each move takes one heap\n  players alternate taking heaps\n  the last player to move loses\n  so the first player wins iff the number of heaps is even",
+ invariant:"The misère version of a game is not the same as the normal version. Grundy numbers do not directly apply.",
+ uses:"Misère Nim, misère Kayles, misère Hackenbush, combinatorial game theory.",
+ strength:"Simple for Nim. The general theory uses genus theory or misère quotients.",
+ limits:"Misère play is much harder than normal play for general games. No simple Grundy-like theorem.",
+ pitfall:"Assuming the normal-play strategy works. For [1, 1, 1] misère, the first player loses, but the nim-sum is 1 (nonzero).",
+ question:"Who wins [1, 1] in misère Nim?",
+ answer:"The first player. They take one heap, leaving [1]. The second player must take the last object and loses.",
+ demo:"misere",sample:"1 1 1",refs:[
+  ["Conway, On Numbers and Games, 1976","https://www.routledge.com/On-Numbers-and-Games/Conway/p/book/9781568811277"],
+  ["Siegel, Misère games and misère quotients, 2013","https://arxiv.org/abs/1305.3883"],
+  ["Berlekamp, Conway, Guy, Winning Ways, 1982","https://www.routledge.com/Winning-Ways-for-Your-Mathematical-Plays/Berlekamp-Conway-Guy/p/book/9781568811307"]]},
+/* ================= 6 Strategic games and equilibria ================= */
+{id:"nash-equilibrium",title:"Nash equilibrium and support enumeration",level:4,kind:"Equilibrium",status:"Runnable teaching lab",
+ summary:"A Nash equilibrium is a strategy profile where no player can improve by deviating alone. In finite games, a mixed Nash equilibrium always exists. Support enumeration finds all equilibria in small games.",
+ mental:"No player wants to change their strategy",
+ mentalText:"At equilibrium, every player's strategy is a best response to the others. Pure equilibria are easy to spot. Mixed equilibria make opponents indifferent.",
+ steps:["Enumerate all support pairs (subsets of actions for each player).","For each support, solve the indifference equations.","Check that the solution is a valid mixed strategy (non-negative, sums to 1).","Check that no action outside the support is better."],
+ pseudo:"support_enumeration(A, B):\n  for each support I of player 1, J of player 2:\n    if |I| != |J|: continue\n    solve for x on support I, y on support J:\n      sum_{j in J} A[i][j] y_j = u for all i in I\n      sum_{j in J} y_j = 1\n      sum_{i in I} B[i][j] x_i = v for all j in J\n      sum_{i in I} x_i = 1\n    if all x_i, y_j >= 0:\n      check best response: no action outside support beats u, v\n      if ok: record equilibrium\n\nExistence: every finite game has at least one Nash equilibrium (Nash 1950).",
+ invariant:"A mixed equilibrium requires the opponent to be indifferent among the actions in their support.",
+ uses:"Economics, game theory, multi-agent systems, poker, security games.",
+ strength:"Complete for small games. Always terminates.",
+ limits:"Exponential in the number of actions. Intractable for large games.",
+ pitfall:"Pure equilibria may exist alongside mixed ones. Support enumeration must check all sizes.",
+ question:"Does every finite game have a Nash equilibrium?",
+ answer:"Yes, in mixed strategies. This is Nash's theorem (1950). Pure equilibria may not exist (e.g., matching pennies).",
+ demo:"nash-equilibrium",sample:"0 -1 1 0\n0 1 -1 0",refs:[
+  ["Nash, Equilibrium points in n-person games, PNAS 1950","https://doi.org/10.1073/pnas.36.1.48"],
+  ["Nisan et al., Algorithmic Game Theory, Cambridge 2007","https://www.cambridge.org/core/books/algorithmic-game-theory/"],
+  ["von Stengel, Computing equilibria for two-person games, Handbook of Game Theory 2002","https://doi.org/10.1016/S1574-0005(02)03011-3"]]},
+{id:"minimax-theorem",title:"Minimax theorem and zero-sum games",level:4,kind:"Equilibrium",status:"Concept lesson",
+ summary:"In a two-player zero-sum game, the value of the game exists and is unique. The row player maximizes the minimum payoff; the column player minimizes the maximum. Mixed strategies are generally required.",
+ mental:"The value of a zero-sum game is the same whoever moves first",
+ mentalText:"The max-min and min-max values are equal. This is the minimax theorem (von Neumann 1928).",
+ steps:["Write the payoff matrix A for the row player.","Solve the LP: maximize v subject to sum_i x_i A[i][j] >= v for all j.","The optimal v is the value of the game.","The column player's optimal strategy comes from the dual."],
+ pseudo:"minimax theorem:\n  max_x min_y x^T A y = min_y max_x x^T A y = v\n\nLP formulation (row player):\n  maximize v\n  subject to sum_i x_i A[i][j] >= v  for all j\n             sum_i x_i = 1, x_i >= 0\n\nLP formulation (column player):\n  minimize w\n  subject to sum_j A[i][j] y_j <= w  for all i\n             sum_j y_j = 1, y_j >= 0\n\nStrong duality: v = w.",
+ invariant:"The theorem holds for finite zero-sum games with mixed strategies. It does not hold for general-sum games.",
+ uses:"Poker, security games, LP duality, robust optimization.",
+ strength:"Reduces zero-sum games to linear programming.",
+ limits:"Only for two-player zero-sum. General-sum games do not have a unique value.",
+ pitfall:"Confusing the minimax theorem with the minimax algorithm. The theorem is about mixed strategies; the algorithm is about game tree search.",
+ question:"What is the value of matching pennies?",
+ answer:"0. Both players mix 50/50. The game is fair.",
+ demo:"minimax-theorem",sample:"1 -1\n-1 1",refs:[
+  ["von Neumann, Zur Theorie der Gesellschaftsspiele, Mathematische Annalen 1928","https://doi.org/10.1007/BF01448847"],
+  ["von Neumann and Morgenstern, Theory of Games and Economic Behavior, 1944","https://press.princeton.edu/books/paperback/9780691130613/theory-of-games-and-economic-behavior"],
+  ["Nisan et al., Algorithmic Game Theory, Chapter 3","https://www.cambridge.org/core/books/algorithmic-game-theory/"]]},
+{id:"lemke-howson",title:"Lemke-Howson algorithm",level:5,kind:"Equilibrium",status:"Concept lesson",
+ summary:"The Lemke-Howson algorithm finds one Nash equilibrium of a bimatrix game by following a path of labeled vertices on the best-response polytopes. It is the classic pivoting algorithm for general-sum games.",
+ mental:"Walk along the edges of two polytopes until both labels match",
+ mentalText:"Each player has a polytope. Vertices are labeled by the strategies they make indifferent. The algorithm follows a path from an artificial starting point to a completely labeled vertex, which is a Nash equilibrium.",
+ steps:["Form the two best-response polytopes.","Start at the artificial equilibrium (all players use a dummy strategy).","Pick a label to drop.","Follow the unique path of vertices with that label dropped.","Stop when the dropped label reappears, giving a completely labeled vertex."],
+ pseudo:"lemke_howson(A, B, starting_label):\n  build polytopes P = {x >= 0 : B^T x <= 1}, Q = {y >= 0 : A y <= 1}\n  start at (0, 0) with label k dropped\n  loop:\n    pivot to the next vertex\n    if the dropped label is picked up again:\n      return the completely labeled vertex (a Nash equilibrium)\n\nComplexity:\n  worst case exponential (theoretically)\n  fast in practice for small games",
+ invariant:"The path is unique and terminates at a completely labeled vertex, which is a Nash equilibrium.",
+ uses:"Computing equilibria in bimatrix games, economic modeling.",
+ strength:"Simple pivoting. Finds one equilibrium.",
+ limits:"Exponential worst case. Only finds one equilibrium, not all.",
+ pitfall:"The starting label affects which equilibrium is found. Different labels can lead to different equilibria.",
+ question:"How many equilibria can a bimatrix game have?",
+ answer:"An odd number for nondegenerate games (by the Lemke-Howson index theorem). It can be exponential in the size of the game.",
+ demo:"none",sample:"",refs:[
+  ["Lemke and Howson, Equilibrium points of bimatrix games, J. SIAM 1964","https://doi.org/10.1137/0112033"],
+  ["von Stengel, Computing equilibria for two-person games, 2002","https://doi.org/10.1016/S1574-0005(02)03011-3"],
+  ["Nisan et al., Algorithmic Game Theory, Chapter 3","https://www.cambridge.org/core/books/algorithmic-game-theory/"]]},
+{id:"regret-matching",title:"Regret matching and multiplicative weights",level:4,kind:"Equilibrium",status:"Runnable teaching lab",
+ summary:"Regret matching is a simple no-regret learning algorithm. Each player tracks the regret of not having played each action, and plays proportionally to positive regret. In two-player zero-sum games, average strategies converge to Nash.",
+ mental:"Play more of the actions you regret not playing",
+ mentalText:"After each round, compare the payoff you got to what you would have gotten with each other action. Accumulate regret. Next round, play each action in proportion to its positive cumulative regret.",
+ steps:["Initialize cumulative regrets to zero.","Play each action with probability proportional to positive regret.","Observe the payoff and the counterfactual payoffs.","Update regrets.","Repeat.","The average strategy converges to Nash in zero-sum games."],
+ pseudo:"regret_matching(iterations):\n  R = [0] * num_actions\n  S = [0] * num_actions\n  for t in 1..iterations:\n    pos = [max(0, r) for r in R]\n    if sum(pos) == 0: strategy = uniform\n    else: strategy = pos / sum(pos)\n    play(strategy)\n    observe payoffs u(a)\n    for a in actions:\n      R[a] += u(a) - u(strategy)\n    S += strategy\n  return S / iterations   # average strategy\n\nConvergence:\n  zero-sum: average strategy approaches Nash\n  general-sum: average strategy approaches coarse correlated equilibrium",
+ invariant:"Regret matching guarantees sublinear regret: R(T)/T -> 0. The average strategy therefore converges in zero-sum games.",
+ uses:"Poker AI (Libratus, Pluribus), security games, online learning.",
+ strength:"Simple. No gradient. Converges in zero-sum games.",
+ limits:"Slow convergence. Requires many iterations.",
+ pitfall:"Regret matching converges in average strategy, not in current strategy. The current strategy may cycle.",
+ question:"Why does regret matching converge to Nash in zero-sum games?",
+ answer:"In zero-sum games, low regret for both players implies the average strategy profile is close to a Nash equilibrium. This follows from the minimax theorem.",
+ demo:"regret-matching",sample:"2000",refs:[
+  ["Hart and Mas-Colell, A simple adaptive procedure leading to correlated equilibrium, Econometrica 2000","https://doi.org/10.1111/1468-0262.00153"],
+  ["Zinkevich et al., Regret minimization in games with incomplete information, NeurIPS 2007","https://papers.nips.cc/paper/2007/hash/08d98638c6fcd194a4b1e6992063e944-Abstract.html"],
+  ["Nisan et al., Algorithmic Game Theory, Chapter 4","https://www.cambridge.org/core/books/algorithmic-game-theory/"]]},
+/* ================= 7 Game-playing systems ================= */
+{id:"self-play",title:"Self-play and reinforcement learning",level:5,kind:"Learning",status:"Concept lesson",
+ summary:"Self-play trains an agent by playing against copies of itself. The opponent improves alongside the agent, providing an automatic curriculum. This is how TD-Gammon, AlphaGo Zero and AlphaZero were trained.",
+ mental:"Play yourself, improve, repeat",
+ mentalText:"The agent plays both sides. After each game, update the value and policy toward the outcome. The opponent is a snapshot of the agent, so it always provides a challenge.",
+ steps:["Initialize the policy and value networks randomly.","Play games with the agent on both sides.","Update the networks toward the game outcome.","Periodically snapshot the agent as the new opponent.","Repeat."],
+ pseudo:"self_play(iterations):\n  policy, value = initialize_networks()\n  for i in 1..iterations:\n    games = play_games(policy, policy)\n    for (state, outcome) in games:\n      update value network toward outcome\n      update policy network toward MCTS visit counts\n    if i % snapshot_interval == 0:\n      opponent = copy(policy)\n\nKey idea:\n  the opponent is a previous version of the agent\n  as the agent improves, the opponent improves\n  no human data needed",
+ invariant:"Self-play works when the game is symmetric enough that a copy of the agent is a meaningful opponent.",
+ uses:"TD-Gammon, AlphaGo Zero, AlphaZero, MuZero, Pluribus.",
+ strength:"No human data. Automatic curriculum. Can exceed human level.",
+ limits:"Requires a good simulator. Can get stuck in local equilibria.",
+ pitfall:"Self-play can cycle or collapse if the opponent is not snapshotted. Always keep a pool of past opponents.",
+ question:"Why does self-play provide an automatic curriculum?",
+ answer:"As the agent improves, its copy also improves. The opponent is always at the agent's level, so the difficulty scales automatically.",
+ demo:"none",sample:"",refs:[
+  ["Tesauro, Temporal difference learning and TD-Gammon, CACM 1995","https://doi.org/10.1145/203330.203343"],
+  ["Silver et al., Mastering the game of Go without human knowledge, Nature 2017","https://doi.org/10.1038/nature24270"],
+  ["Silver et al., A general reinforcement learning algorithm that masters chess, shogi and Go, Science 2018","https://doi.org/10.1126/science.aar6404"]]},
+{id:"alphazero",title:"AlphaZero and policy/value networks",level:5,kind:"Learning",status:"Concept lesson",
+ summary:"AlphaZero combines MCTS with a deep neural network that outputs a policy (move probabilities) and a value (position evaluation). The network guides the search; the search generates better training targets for the network.",
+ mental:"MCTS guided by a neural network, trained by self-play",
+ mentalText:"The network proposes moves and evaluates positions. MCTS uses these to search. The visit counts from MCTS become the policy target; the game outcome becomes the value target.",
+ steps:["Use the network to initialize MCTS priors.","Run MCTS to get visit counts.","Play a move proportional to visit counts.","Record the policy target (visit counts) and value target (game outcome).","Train the network on these targets.","Repeat."],
+ pseudo:"alphazero_training():\n  network = initialize()\n  for iteration in 1..N:\n    examples = []\n    for game in 1..num_games:\n      state = initial\n      while not terminal:\n        pi = mcts(state, network)   # visit counts\n        a = sample(pi)\n        examples.append((state, pi, player))\n        state = apply(state, a)\n      z = outcome(state)\n      for (s, pi, p) in examples:\n        target_value = z if p == current_player else -z\n        store(s, pi, target_value)\n    network = train(network, examples)\n\nNetwork:\n  input: board position\n  output: policy (probability over moves), value (scalar)\n  architecture: residual CNN for board games",
+ invariant:"The network and the search improve each other. The search provides better targets than the raw network; the network makes the search stronger.",
+ uses:"Chess, shogi, Go, and general board games.",
+ strength:"Superhuman play without human knowledge. Generalizes across games.",
+ limits:"Requires a simulator and significant compute. Not directly for imperfect-information games.",
+ pitfall:"The value target must be from the perspective of the player to move, not a fixed player.",
+ question:"What does the policy head of AlphaZero output?",
+ answer:"A probability distribution over legal moves. It is used as a prior for MCTS.",
+ demo:"none",sample:"",refs:[
+  ["Silver et al., Mastering chess and shogi by self-play with a general reinforcement learning algorithm, 2017","https://arxiv.org/abs/1712.01815"],
+  ["Silver et al., A general reinforcement learning algorithm that masters chess, shogi and Go, Science 2018","https://doi.org/10.1126/science.aar6404"],
+  ["AlphaZero official page","https://deepmind.google/discover/blog/alphazero-shedding-new-light-on-chess-shogi-and-go/"]]},
+{id:"muzero",title:"MuZero and learned models",level:5,kind:"Learning",status:"Concept lesson",
+ summary:"MuZero learns a latent dynamics model and plans in latent space. It does not need the rules of the game. It matches AlphaZero on Atari, chess, shogi and Go.",
+ mental:"Learn the rules, then plan in your head",
+ mentalText:"MuZero has three networks: representation, dynamics and prediction. The representation encodes a state. The dynamics predicts the next latent state and reward. The prediction gives policy and value. MCTS runs entirely in latent space.",
+ steps:["Encode the observation with the representation network.","Run MCTS in latent space using the dynamics and prediction networks.","Play a move.","Train all networks end-to-end from the search targets."],
+ pseudo:"muzero_training():\n  networks = (representation, dynamics, prediction)\n  for iteration in 1..N:\n    for each game:\n      observations = play_game(networks)\n      for each timestep:\n        latent = representation(observation)\n        pi, v = mcts(latent, networks)\n        train networks to match pi, v, reward\n\nMCTS in latent space:\n  select, expand, simulate using dynamics\n  no access to the true rules\n\nLoss = policy loss + value loss + reward loss",
+ invariant:"The latent dynamics must be consistent: the same latent state must lead to the same predictions. This is enforced by the training loss.",
+ uses:"Atari, board games, any environment with a visual or compact observation.",
+ strength:"No rules needed. Learns the model from data.",
+ limits:"Needs a lot of data and compute. Latent model may be inaccurate.",
+ pitfall:"The learned model can drift. Reward prediction is critical for long-horizon planning.",
+ question:"What is the main difference between AlphaZero and MuZero?",
+ answer:"AlphaZero requires the rules of the game to simulate. MuZero learns a latent dynamics model and plans in latent space without the rules.",
+ demo:"none",sample:"",refs:[
+  ["Schrittwieser et al., Mastering Atari, Go, chess and shogi by planning with a learned model, Nature 2020","https://doi.org/10.1038/s41586-020-03051-4"],
+  ["MuZero official page","https://deepmind.google/discover/blog/muzero-mastering-go-chess-shogi-and-atari-through-Planning/"],
+  ["Hafner et al., Dream to control: Learning behaviors by latent imagination, ICLR 2020","https://arxiv.org/abs/1912.01603"]]},
+{id:"poker-ai",title:"Libratus, Pluribus and imperfect-information games",level:5,kind:"Learning",status:"Concept lesson",
+ summary:"Poker is an imperfect-information game. Counterfactual regret minimization (CFR) minimizes regret at each information set. Libratus beat top human heads-up players; Pluribus beat six-player no-limit hold'em.",
+ mental:"Learn a strategy that is hard to exploit",
+ mentalText:"CFR computes the regret of each action at each information set, weighted by the probability of reaching that set. Regret matching at each information set converges to a Nash equilibrium in two-player zero-sum games.",
+ steps:["Represent the game as an extensive-form tree with information sets.","Run CFR: traverse the tree, compute counterfactual values.","Update regrets at each information set.","Derive the average strategy.","For large games, use abstraction and deep learning."],
+ pseudo:"cfr(game, iterations):\n  regrets = initialize at every information set\n  strategy_sum = accumulate average strategy\n  for t in 1..iterations:\n    traverse(game, history, reach_probs)\n  return strategy_sum / iterations\n\nCounterfactual regret at information set I:\n  R(I, a) = sum over histories h in I of\n              pi_{-i}(h) * (u(h, a) - u(h))\n\nRegret matching at I:\n  sigma(I, a) = max(R(I, a), 0) / sum of positives\n\nVariants:\n  CFR+ (faster convergence)\n  Monte Carlo CFR (sampled)\n  Deep CFR (function approximation)",
+ invariant:"CFR converges to a Nash equilibrium in two-player zero-sum games. In multiplayer games it converges to a coarse correlated equilibrium.",
+ uses:"Poker AI, security games, negotiation, any imperfect-information game.",
+ strength:"Converges in theory. Scales with abstraction.",
+ limits:"Full CFR is intractable for large games. Needs abstraction or sampling.",
+ pitfall:"The average strategy is the equilibrium, not the current strategy. Always use the average for evaluation.",
+ question:"What is an information set in poker?",
+ answer:"The set of histories consistent with a player's observations. In poker, you know your cards and the public cards, but not the opponents' cards.",
+ demo:"none",sample:"",refs:[
+  ["Zinkevich et al., Regret minimization in games with incomplete information, NeurIPS 2007","https://papers.nips.cc/paper/2007/hash/08d98638c6fcd194a4b1e6992063e944-Abstract.html"],
+  ["Brown and Sandholm, Superhuman AI for heads-up no-limit poker: Libratus beats top professionals, Science 2018","https://doi.org/10.1126/science.aao1733"],
+  ["Brown and Sandholm, Superhuman AI for multiplayer poker, Science 2019","https://doi.org/10.1126/science.aay2400"]]},
+/* ================= 8 Cooperative games and mechanism design ================= */
+{id:"shapley",title:"Shapley value",level:4,kind:"Cooperative game",status:"Runnable teaching lab",
+ summary:"The Shapley value divides the value of a coalition game among players based on their average marginal contribution. It is the unique division satisfying efficiency, symmetry, dummy and additivity.",
+ mental:"Average how much each player adds to every possible coalition",
+ mentalText:"For each player, look at every subset of other players. Compute the marginal value of adding this player. Weight by the probability of that subset forming. Average.",
+ steps:["List all players.","For each subset not containing player i, compute the marginal contribution.","Weight by |S|! (n-|S|-1)! / n!.","Sum over all subsets."],
+ pseudo:"shapley_value(v, n):\n  for i in 1..n:\n    phi[i] = 0\n    for each subset S of N \\ {i}:\n      weight = |S|! * (n - |S| - 1)! / n!\n      phi[i] += weight * (v(S ∪ {i}) - v(S))\n  return phi\n\nAxioms (Shapley 1953):\n  Efficiency: sum phi[i] = v(N)\n  Symmetry: equal contributors get equal shares\n  Dummy: a player who adds nothing gets 0\n  Additivity: phi(v + w) = phi(v) + phi(w)\n\nComplexity: O(2^n * n) for n players",
+ invariant:"The four axioms uniquely determine the Shapley value.",
+ uses:"Profit sharing, cost allocation, feature attribution in ML (SHAP), coalition formation.",
+ strength:"Unique and fair. Well-defined for any coalition game.",
+ limits:"Exponential in n. Sampling needed for large n.",
+ pitfall:"The Shapley value depends on the characteristic function v(S). A different v gives a different answer.",
+ question:"What is the Shapley value of a three-player majority game?",
+ answer:"Each player gets 1/3. The game is symmetric.",
+ demo:"shapley",sample:"35 25 20 15\n51",refs:[
+  ["Shapley, A value for n-person games, Contributions to the Theory of Games 1953","https://doi.org/10.1515/9781400881970-018"],
+  ["Lundberg and Lee, A unified approach to interpreting model predictions (SHAP), NeurIPS 2017","https://arxiv.org/abs/1705.07874"],
+  ["Osborne and Rubinstein, A Course in Game Theory, MIT Press 1994","https://mitpress.mit.edu/9780262650403/a-course-in-game-theory/"]]},
+{id:"nucleolus",title:"Nucleolus and the core",level:5,kind:"Cooperative game",status:"Concept lesson",
+ summary:"The nucleolus is a solution concept that minimizes the maximum dissatisfaction of any coalition. It always exists and is unique. The core is the set of allocations that no coalition can improve upon.",
+ mental:"Make the unhappiest coalition as happy as possible",
+ mentalText:"For each allocation, compute the excess of every coalition (how much it could gain by deviating). Sort the excesses. The nucleolus lexicographically minimizes the sorted excess vector.",
+ steps:["Compute the characteristic function.","For a candidate allocation, compute every coalition's excess.","Sort the excesses in decreasing order.","Find the allocation that lexicographically minimizes this vector."],
+ pseudo:"nucleolus(v, n):\n  # solve a sequence of LPs\n  # each LP minimizes the maximum excess over a set of coalitions\n  # then fixes those coalitions and moves to the next tier\n  return allocation\n\nCore:\n  { x : sum x_i = v(N), sum_{i in S} x_i >= v(S) for all S }\n  The core can be empty.\n\nThe nucleolus is in the core if the core is non-empty.",
+ invariant:"The nucleolus is unique. It minimizes the worst-case excess in the lexicographic order.",
+ uses:"Cost allocation, profit sharing, bankruptcy problems.",
+ strength:"Always exists and is unique. Single point solution.",
+ limits:"Computing it requires solving a sequence of LPs. Exponential in the number of coalitions.",
+ pitfall:"The core can be empty. The nucleolus still exists but is not in the core.",
+ question:"What is the excess of a coalition?",
+ answer:"v(S) - sum_{i in S} x_i. It measures how much the coalition could gain by leaving the grand coalition.",
+ demo:"none",sample:"",refs:[
+  ["Schmeidler, The nucleolus of a characteristic function game, SIAM J. Applied Math 1969","https://doi.org/10.1137/0117107"],
+  ["Maschler, Peleg, Shapley, Geometric properties of the kernel, nucleolus and related solution concepts, Math. of OR 1979","https://doi.org/10.1287/moor.4.4.303"],
+  ["Osborne and Rubinstein, A Course in Game Theory, MIT Press 1994","https://mitpress.mit.edu/9780262650403/a-course-in-game-theory/"]]},
+{id:"vcg",title:"VCG auctions",level:4,kind:"Mechanism design",status:"Runnable teaching lab",
+ summary:"The Vickrey-Clarke-Groves mechanism allocates items to maximize social welfare and charges each winner the externality they impose on others. Truthful bidding is a dominant strategy.",
+ mental:"Winner pays the harm they do to others",
+ mentalText:"Find the allocation that maximizes total value. Each winner pays the difference between the welfare of others with and without them.",
+ steps:["Collect bids from all bidders.","Find the allocation maximizing total reported value.","For each winner, compute the welfare of others under the optimal allocation.","Compute the welfare of others if the winner were excluded.","Payment = difference."],
+ pseudo:"vcg(bids, items):\n  allocation = argmax over allocations of sum of bids\n  for each winner i:\n    welfare_others_with_i = sum of bids of other winners\n    welfare_others_without_i = max welfare with i excluded\n    payment[i] = welfare_others_without_i - welfare_others_with_i\n  return allocation, payments\n\nSingle item:\n  winner = highest bidder\n  payment = second-highest bid\n\nProperties:\n  dominant strategy: bid your true value\n  efficient: maximizes social welfare\n  individually rational: winners pay at most their value",
+ invariant:"Truthful bidding is a dominant strategy because the payment does not depend on the bidder's own bid.",
+ uses:"Spectrum auctions, ad auctions, public goods, kidney exchange.",
+ strength:"Truthful, efficient, individually rational.",
+ limits:"Payments can be low. Not budget-balanced. Vulnerable to collusion.",
+ pitfall:"VCG is not revenue-optimal. In some settings the seller prefers a different mechanism.",
+ question:"What does the winner pay in a single-item VCG auction?",
+ answer:"The second-highest bid. This equals the externality imposed on the second-highest bidder.",
+ demo:"vcg",sample:"10 20 15",refs:[
+  ["Vickrey, Counterspeculation, auctions, and competitive sealed tenders, J. Finance 1961","https://doi.org/10.1111/j.1540-6261.1961.tb02789.x"],
+  ["Clarke, Multipart pricing of public goods, Public Choice 1971","https://doi.org/10.1007/BF01726210"],
+  ["Groves, Incentives in teams, Econometrica 1973","https://doi.org/10.2307/1914085"]]},
+{id:"gsp",title:"Generalized second price auction",level:4,kind:"Mechanism design",status:"Runnable teaching lab",
+ summary:"GSP is the auction used by search engines for sponsored links. Bidders are ranked by bid; each pays the next-highest bid. GSP is not incentive-compatible but has stable equilibria.",
+ mental:"Rank by bid, pay the next bid down",
+ mentalText:"Bidders submit bids. Positions are assigned in decreasing bid order. Each bidder pays the next-highest bid times the position's click-through rate.",
+ steps:["Collect bids.","Sort bidders by bid.","Assign position k to the k-th highest bidder.","Charge the k-th bidder the (k+1)-th bid."],
+ pseudo:"gsp(ctrs, bids):\n  sort bidders by bid descending\n  for k in 0..num_positions-1:\n    winner = sorted[k]\n    payment = sorted[k+1].bid if k+1 < n else 0\n    assign position k to winner\n    charge winner ctrs[k] * payment\n\nProperties:\n  not incentive-compatible: bidding truthfully is not dominant\n  has a set of envy-free equilibria\n  revenue can be lower or higher than VCG",
+ invariant:"GSP is not truthful. The equilibrium strategies differ from the true values.",
+ uses:"Google Ads, Bing Ads, Facebook Ads, most sponsored search auctions.",
+ strength:"Simple. Revenue can be high. Easy to implement.",
+ limits:"Not truthful. Bidders need to strategize.",
+ pitfall:"Assuming truthful bidding is optimal in GSP. It is not, in general.",
+ question:"Why is GSP not incentive-compatible?",
+ answer:"A bidder can sometimes improve their utility by bidding below their true value, because the payment depends on the next bid and not on their own value directly.",
+ demo:"gsp",sample:"0.5 0.3 0.2\n10 6 4",refs:[
+  ["Edelman, Ostrovsky, Schwarz, Internet advertising and the generalized second-price auction, American Economic Review 2007","https://doi.org/10.1257/aer.97.1.242"],
+  ["Varian, Position auctions, International Journal of Industrial Organization 2007","https://doi.org/10.1016/j.ijindorg.2006.10.002"],
+  ["Nisan et al., Algorithmic Game Theory, Chapter 28","https://www.cambridge.org/core/books/algorithmic-game-theory/"]]},
+{id:"ttc",title:"Top trading cycles",level:5,kind:"Mechanism design",status:"Runnable teaching lab",
+ summary:"TTC finds a Pareto efficient and strategy-proof allocation of indivisible goods when each agent initially owns one good. Agents point to their favorite remaining good; goods point to their owners; cycles are executed.",
+ mental:"Trade along cycles of mutual preferences",
+ mentalText:"Build a directed graph: each agent points to their favorite remaining item, each item points to its owner. Cycles are guaranteed. Execute all cycles, remove those agents and items, repeat.",
+ steps:["Each remaining agent points to their favorite remaining item.","Each remaining item points to its owner.","Find cycles.","Execute all cycles: each agent gets the item they pointed to.","Remove those agents and items.","Repeat."],
+ pseudo:"ttc(preferences, ownership):\n  remaining_agents = all agents\n  remaining_items = all items\n  while remaining_agents:\n    for each agent a in remaining_agents:\n      a points to favorite item in remaining_items\n    for each item i in remaining_items:\n      i points to its owner\n    cycles = find_cycles(points)\n    for each cycle:\n      for each agent a in cycle:\n        assign a the item it points to\n        remove a and that item from remaining\n\nProperties:\n  strategy-proof: truthful is dominant\n  Pareto efficient\n  individually rational",
+ invariant:"Cycles always exist because every node has out-degree 1. Executing cycles is safe and improves every agent.",
+ uses:"School choice, kidney exchange, housing allocation, course allocation.",
+ strength:"Strategy-proof and Pareto efficient.",
+ limits:"Requires each agent to own exactly one good. Extensions exist for more general settings.",
+ pitfall:"TTC is not the only strategy-proof mechanism. Serial dictatorship is also strategy-proof but may be less efficient.",
+ question:"Why is TTC strategy-proof?",
+ answer:"An agent's pointing to their favorite item never hurts them and cannot be manipulated to improve their allocation, because cycles are executed greedily.",
+ demo:"ttc",sample:"2 1 3\n1 3 2\n3 2 1",refs:[
+  ["Shapley and Scarf, On cores and indivisibility, J. Mathematical Economics 1974","https://doi.org/10.1016/0304-4068(74)90033-0"],
+  ["Abdulkadiroğlu and Sönmez, School choice: A mechanism design approach, American Economic Review 2003","https://doi.org/10.1257/000282803322157061"],
+  ["Roth, Sönmez, Ünver, Kidney exchange, QJE 2004","https://doi.org/10.1162/003355304772839553"]]},
+/* ================= 9 Voting and fair division ================= */
+{id:"borda",title:"Borda count",level:3,kind:"Voting",status:"Runnable teaching lab",
+ summary:"Borda count asks each voter to rank the candidates. A candidate gets points equal to the number of candidates ranked below them on each ballot. Highest total wins.",
+ mental:"Rank candidates, give points for each one below",
+ mentalText:"Each voter submits a ranking. For a ballot with n candidates, the top candidate gets n-1 points, the next n-2, ..., the last gets 0. Sum over all voters.",
+ steps:["Collect rankings from all voters.","For each voter, assign n-1, n-2, ..., 0 points.","Sum points per candidate.","The candidate with the most points wins."],
+ pseudo:"borda(rankings):\n  scores = {c: 0 for c in candidates}\n  n = len(candidates)\n  for ranking in rankings:\n    for i, c in enumerate(ranking):\n      scores[c] += n - 1 - i\n  return max(scores, key=scores.get)\n\nProperties:\n  satisfies monotonicity, consistency, participation\n  violates the majority criterion\n  vulnerable to burying (ranking a strong rival last)",
+ invariant:"Borda scores depend on the number of candidates. Adding or removing a candidate changes everyone's scores.",
+ uses:"Sports rankings, elections, decision theory, multi-criteria optimization.",
+ strength:"Uses full preference information. Always produces a ranking.",
+ limits:"Violates the majority criterion. Manipulable by burying.",
+ pitfall:"The Borda winner can differ from the Condorcet winner. Both are 'fair' by different criteria.",
+ question:"Can the Borda winner lose a head-to-head race?",
+ answer:"Yes. This is a classic violation of the majority criterion. Borda and Condorcet can disagree.",
+ demo:"borda",sample:"A B C\nB C A\nC A B\nA C B",refs:[
+  ["Borda, Mémoire sur les élections au scrutin, 1781","https://gallica.bnf.fr/ark:/12148/bpt6k50625w"],
+  ["Saari, Decisions and Elections, Cambridge 2001","https://www.cambridge.org/core/books/decisions-and-elections/"],
+  ["Brandt et al., Handbook of Computational Social Choice, Cambridge 2016","https://www.cambridge.org/core/books/handbook-of-computational-social-choice/"]]},
+{id:"condorcet-schulze",title:"Condorcet and Schulze methods",level:4,kind:"Voting",status:"Runnable teaching lab",
+ summary:"A Condorcet winner beats every other candidate head-to-head. The Schulze method orders candidates by the strength of the strongest path of pairwise victories.",
+ mental:"Who beats whom in head-to-head matchups?",
+ mentalText:"Build a pairwise matrix. A Condorcet winner beats everyone. When no Condorcet winner exists, Schulze ranks by the strongest path.",
+ steps:["Build the pairwise matrix.","Find the Condorcet winner if one exists.","For Schulze, compute the strongest path between every pair.","Rank by the number of candidates a candidate can beat via strong paths."],
+ pseudo:"condorcet(rankings):\n  for each pair (a, b):\n    count voters who prefer a to b\n  a is Condorcet winner if a beats every other\n\nschulze(rankings):\n  build pairwise matrix P\n  d[i][j] = P[i][j] if P[i][j] > P[j][i] else -infinity\n  for k in candidates:\n    for i in candidates:\n      for j in candidates:\n        d[i][j] = max(d[i][j], min(d[i][k], d[k][j]))\n  rank by number of j with d[i][j] > d[j][i]",
+ invariant:"The strongest path computation is a widest-path problem, solved by a variant of Floyd-Warshall.",
+ uses:"Debian, Wikimedia, open-source governance, political elections.",
+ strength:"Condorcet winner satisfies a strong fairness criterion. Schulze always produces a ranking.",
+ limits:"Condorcet winner may not exist. Schulze is not strategy-proof.",
+ pitfall:"The pairwise matrix must count ties correctly. A tie does not count as a victory.",
+ question:"Can a Condorcet cycle occur?",
+ answer:"Yes. The classic example is A > B, B > C, C > A. This is the Condorcet paradox.",
+ demo:"condorcet-schulze",sample:"A B C\nB C A\nC A B",refs:[
+  ["Condorcet, Essai sur l'application de l'analyse à la probabilité des décisions rendues à la pluralité des voix, 1785","https://gallica.bnf.fr/ark:/12148/bpt6k417181"],
+  ["Schulze, A new monotonic, clone-independent, reversal symmetric, and Condorcet-consistent single-winner election method, Social Choice and Welfare 2011","https://doi.org/10.1007/s00355-010-0475-4"],
+  ["Brandt et al., Handbook of Computational Social Choice, Cambridge 2016","https://www.cambridge.org/core/books/handbook-of-computational-social-choice/"]]},
+{id:"irv",title:"Instant-runoff voting",level:3,kind:"Voting",status:"Runnable teaching lab",
+ summary:"IRV repeatedly eliminates the candidate with the fewest first-place votes and transfers their votes to the next preference. The process continues until someone has a majority.",
+ mental:"Eliminate the weakest, transfer votes, repeat",
+ mentalText:"Count first preferences. If no majority, eliminate the last-place candidate and redistribute their votes. Repeat.",
+ steps:["Count first preferences.","If a candidate has > 50%, they win.","Otherwise eliminate the candidate with the fewest votes.","Transfer their votes to the next non-eliminated preference.","Repeat."],
+ pseudo:"irv(ballots):\n  eliminated = set()\n  while True:\n    counts = count_first_preferences(ballots, eliminated)\n    if max(counts) > total / 2:\n      return winner\n    loser = argmin(counts)\n    eliminated.add(loser)\n\nProperties:\n  satisfies the majority criterion\n  violates monotonicity (a candidate can lose by gaining votes)\n  not Condorcet-consistent",
+ invariant:"Votes are transferred to the next non-eliminated preference. A ballot can become exhausted if all its preferences are eliminated.",
+ uses:"Australia, Ireland, San Francisco, ranked-choice voting in the US.",
+ strength:"Simple to explain. Majority winner guaranteed.",
+ limits:"Violates monotonicity. Can eliminate a Condorcet winner.",
+ pitfall:"Exhausted ballots change the majority threshold. Decide whether to count them in the total.",
+ question:"Can IRV eliminate the Condorcet winner?",
+ answer:"Yes. A Condorcet winner can be eliminated early if they have few first-place votes.",
+ demo:"irv",sample:"A B C\nB C A\nC A B\nA C B\nB A C",refs:[
+  ["Burnett, The Ballot, 1859 (early IRV proposal)","https://archive.org/details/ballot00burn"],
+  ["Fishburn and Brams, Paradoxes of preferential voting, Mathematics Magazine 1983","https://doi.org/10.1080/0025570X.1983.11977046"],
+  ["Brandt et al., Handbook of Computational Social Choice, Cambridge 2016","https://www.cambridge.org/core/books/handbook-of-computational-social-choice/"]]},
+{id:"fair-division",title:"Fair division: cut-and-choose and Adjusted Winner",level:5,kind:"Fair division",status:"Runnable teaching lab",
+ summary:"Fair division allocates goods among parties so that each feels they got a fair share. Cut-and-choose works for two parties and divisible goods. Adjusted Winner handles multiple indivisible goods.",
+ mental:"Divide so each party prefers their own share",
+ mentalText:"In cut-and-choose, one party divides and the other chooses. In Adjusted Winner, each party bids points on the items, items go to the higher bidder, then transfers equalize.",
+ steps:["Each party assigns points to items (Adjusted Winner).","Give each item to the higher bidder.","Compute each party's total.","Transfer items from the advantaged party to the other in increasing ratio order."],
+ pseudo:"adjusted_winner(valuations_A, valuations_B):\n  for each item i:\n    if A values i more: give i to A\n    else: give i to B\n  total_A, total_B = sums\n  while total_A != total_B:\n    give the item with smallest ratio va/vb from A to B\n    (or vb/va from B to A)\n  return allocation\n\nProperties:\n  envy-free: each party prefers their own share\n  Pareto optimal\n  works for two parties and divisible or indivisible goods",
+ invariant:"The transfer step must be ordered by the ratio of valuations. A non-optimal order can miss envy-freeness.",
+ uses:"Divorce settlements, international negotiations, fair allocation of goods.",
+ strength:"Envy-free and Pareto optimal for two parties.",
+ limits:"Only for two parties. Extensions to more parties are harder and sometimes impossible.",
+ pitfall:"The valuations must be normalized. Without normalization the transfer step is ill-defined.",
+ question:"Is Adjusted Winner envy-free?",
+ answer:"Yes, for two parties. Each party weakly prefers their own allocation to the other party's.",
+ demo:"fair-division",sample:"6 4 3 2\n5 5 4 1",refs:[
+  ["Brams and Taylor, Fair Division: From Cake-Cutting to Dispute Resolution, Cambridge 1996","https://www.cambridge.org/core/books/fair-division/"],
+  ["Steinhaus, The problem of fair division, Econometrica 1948","https://www.jstor.org/stable/1907013"],
+  ["Robertson and Webb, Cake-Cutting Algorithms, A K Peters 1998","https://www.taylorfrancis.com/books/mono/10.1201/9781439863855/cake-cutting-algorithms-jack-robertson-william-webb"]]},
+];
+
+const LESSONS=RAW.map(mk);
+const byId=Object.fromEntries(LESSONS.map(x=>[x.id,x]));
+
+/* ============================================================
+   Code examples (Python)
+   ============================================================ */
+const CODE={
+ "game-state":{python:`# State space of tic-tac-toe: count reachable positions
+
+def count_positions():
+    seen = set()
+    def rec(board, turn):
+        key = board + turn
+        if key in seen: return
+        seen.add(key)
+        w = winner(board)
+        if w or '.' not in board: return
+        for i in range(9):
+            if board[i] == '.':
+                rec(board[:i] + turn + board[i+1:], 'O' if turn == 'X' else 'X')
+    rec('.' * 9, 'X')
+    return len(seen)
+
+def winner(b):
+    lines = [(0,1,2),(3,4,5),(6,7,8),(0,3,6),(1,4,7),(2,5,8),(0,4,8),(2,4,6)]
+    for a,b_,c in lines:
+        if b[a] != '.' and b[a] == b[b_] == b[c]:
+            return b[a]
+    return None
+
+print(count_positions())
+`},
+ "minimax-negamax":{python:`import functools
+
+def winner(b):
+    lines = [(0,1,2),(3,4,5),(6,7,8),(0,3,6),(1,4,7),(2,5,8),(0,4,8),(2,4,6)]
+    for a,b_,c in lines:
+        if b[a] != '.' and b[a] == b[b_] == b[c]:
+            return b[a]
+    return None
+
+@functools.lru_cache(None)
+def minimax(board, turn):
+    w = winner(board)
+    if w == 'X': return (1, None)
+    if w == 'O': return (-1, None)
+    if '.' not in board: return (0, None)
+    best = None
+    for i in range(9):
+        if board[i] == '.':
+            child = board[:i] + turn + board[i+1:]
+            score, _ = minimax(child, 'O' if turn == 'X' else 'X')
+            if best is None or (turn == 'X' and score > best[0]) or (turn == 'O' and score < best[0]):
+                best = (score, i)
+    return best
+
+score, move = minimax('.' * 9, 'X')
+print("Game value:", score, "Best move:", move)
+`},
+ "alpha-beta":{python:`import random
+
+def minimax_ab(depth, bf, alpha, beta, maximizing, leaf):
+    if depth == 0:
+        return leaf[0]
+    if maximizing:
+        v = -float('inf')
+        for i in range(bf):
+            child = minimax_ab(depth-1, bf, alpha, beta, False, leaf)
+            v = max(v, child)
+            alpha = max(alpha, v)
+            if alpha >= beta: break
+        return v
+    else:
+        v = float('inf')
+        for i in range(bf):
+            child = minimax_ab(depth-1, bf, alpha, beta, True, leaf)
+            v = min(v, child)
+            beta = min(beta, v)
+            if alpha >= beta: break
+        return v
+
+random.seed(1)
+bf, depth = 3, 4
+leaves = [random.randint(-100, 100) for _ in range(bf ** depth)]
+print("Value:", minimax_ab(depth, bf, -float('inf'), float('inf'), True, leaves))
+`},
+ "nim":{python:`def nim_sum(heaps):
+    x = 0
+    for h in heaps: x ^= h
+    return x
+
+def winning_moves(heaps):
+    x = nim_sum(heaps)
+    if x == 0: return []
+    moves = []
+    for i, h in enumerate(heaps):
+        target = h ^ x
+        if target < h:
+            moves.append((i, h - target, target))
+    return moves
+
+print(nim_sum([3, 4, 5]))
+print(winning_moves([3, 4, 5]))
+`},
+ "sprague-grundy":{python:`def grundy(moves, n):
+    G = [0] * (n + 1)
+    for i in range(1, n + 1):
+        reach = set()
+        for m in moves:
+            if i - m >= 0:
+                reach.add(G[i - m])
+        g = 0
+        while g in reach: g += 1
+        G[i] = g
+    return G
+
+print(grundy([1, 2, 3], 20))
+`},
+ "misere":{python:`def misere_nim_status(heaps):
+    x = 0
+    for h in heaps: x ^= h
+    if all(h <= 1 for h in heaps):
+        return 'P' if len(heaps) % 2 == 1 else 'N'
+    return 'P' if x == 0 else 'N'
+
+print(misere_nim_status([1, 1, 1]))  # P
+print(misere_nim_status([1, 1]))     # N
+print(misere_nim_status([2, 2]))     # P
+`},
+ "nash-equilibrium":{python:`# 2x2 bimatrix: support enumeration
+def nash_2x2(A, B):
+    eqs = []
+    # pure
+    for i in range(2):
+        for j in range(2):
+            if A[i][j] >= A[1-i][j] and B[i][j] >= B[i][1-j]:
+                eqs.append(('pure', i, j))
+    # mixed
+    dq = A[0][0] - A[0][1] - A[1][0] + A[1][1]
+    if abs(dq) > 1e-12:
+        q = (A[1][1] - A[0][1]) / dq
+        if 0 <= q <= 1:
+            dp = B[0][0] - B[0][1] - B[1][0] + B[1][1]
+            if abs(dp) > 1e-12:
+                p = (B[1][1] - B[1][0]) / dp
+                if 0 <= p <= 1:
+                    eqs.append(('mixed', p, q))
+    return eqs
+
+# Matching pennies
+A = [[1, -1], [-1, 1]]
+B = [[-1, 1], [1, -1]]
+print(nash_2x2(A, B))
+`},
+ "regret-matching":{python:`import random
+
+def regret_matching(iters=2000):
+    # Rock-paper-scissors
+    def payoff(a, b):
+        if a == b: return 0
+        return 1 if (a - b) % 3 == 1 else -1
+    R = [0.0, 0.0, 0.0]
+    S = [0.0, 0.0, 0.0]
+    for _ in range(iters):
+        pos = [max(0, r) for r in R]
+        s = sum(pos)
+        if s == 0:
+            strat = [1/3, 1/3, 1/3]
+        else:
+            strat = [p / s for p in pos]
+        a = random.choices([0, 1, 2], weights=strat)[0]
+        b = random.randrange(3)
+        u = payoff(a, b)
+        for i in range(3):
+            R[i] += payoff(i, b) - u
+        for i in range(3):
+            S[i] += strat[i]
+    return [x / iters for x in S]
+
+print(regret_matching())
+`},
+ "shapley":{python:`from itertools import combinations
+from math import factorial
+
+def shapley(weights, quota):
+    n = len(weights)
+    v = lambda S: 1 if sum(weights[i] for i in S) >= quota else 0
+    phi = [0.0] * n
+    for i in range(n):
+        others = [j for j in range(n) if j != i]
+        for k in range(n):
+            for S in combinations(others, k):
+                w = factorial(k) * factorial(n - k - 1) / factorial(n)
+                phi[i] += w * (v(S + (i,)) - v(S))
+    return phi
+
+print(shapley([35, 25, 20, 15], 51))
+`},
+ "vcg":{python:`def vcg_single_item(bids):
+    order = sorted(range(len(bids)), key=lambda i: -bids[i])
+    winner = order[0]
+    payment = bids[order[1]] if len(order) > 1 else 0
+    return winner, payment
+
+print(vcg_single_item([10, 20, 15]))
+`},
+ "gsp":{python:`def gsp(ctrs, bids):
+    order = sorted(range(len(bids)), key=lambda i: -bids[i])
+    revenue = 0
+    for k, i in enumerate(order):
+        pay = bids[order[k+1]] if k + 1 < len(order) else 0
+        revenue += ctrs[k] * pay
+    return revenue
+
+print(gsp([0.5, 0.3, 0.2], [10, 6, 4]))
+`},
+ "borda":{python:`def borda(rankings):
+    scores = {}
+    n = len(rankings[0])
+    for r in rankings:
+        for i, c in enumerate(r):
+            scores[c] = scores.get(c, 0) + (n - 1 - i)
+    return sorted(scores.items(), key=lambda x: -x[1])
+
+print(borda([list('ABC'), list('BCA'), list('CAB'), list('ACB')]))
+`},
+ "condorcet-schulze":{python:`def pairwise(rankings):
+    candidates = sorted(set().union(*[set(r) for r in rankings]))
+    n = len(candidates)
+    idx = {c: i for i, c in enumerate(candidates)}
+    P = [[0]*n for _ in range(n)]
+    for r in rankings:
+        for i in range(n):
+            for j in range(i+1, n):
+                P[idx[r[i]]][idx[r[j]]] += 1
+    return candidates, P
+
+def schulze(rankings):
+    candidates, P = pairwise(rankings)
+    n = len(candidates)
+    d = [[0]*n for _ in range(n)]
+    for i in range(n):
+        for j in range(n):
+            if i != j:
+                d[i][j] = P[i][j] if P[i][j] > P[j][i] else -float('inf')
+    for k in range(n):
+        for i in range(n):
+            for j in range(n):
+                d[i][j] = max(d[i][j], min(d[i][k], d[k][j]))
+    wins = [sum(1 for j in range(n) if i != j and d[i][j] > d[j][i]) for i in range(n)]
+    return sorted(zip(candidates, wins), key=lambda x: -x[1])
+
+print(schulze([list('ABC'), list('BCA'), list('CAB')]))
+`},
+ "irv":{python:`def irv(ballots):
+    eliminated = set()
+    while True:
+        counts = {}
+        for b in ballots:
+            for c in b:
+                if c not in eliminated:
+                    counts[c] = counts.get(c, 0) + 1
+                    break
+        total = sum(counts.values())
+        if max(counts.values()) > total / 2:
+            return max(counts, key=counts.get)
+        loser = min(counts, key=counts.get)
+        eliminated.add(loser)
+
+print(irv([list('ABC'), list('BCA'), list('CAB'), list('ACB'), list('BAC')]))
+`},
+ "fair-division":{python:`def adjusted_winner(va, vb):
+    n = len(va)
+    sa, sb = sum(va), sum(vb)
+    va = [100*x/sa for x in va]
+    vb = [100*x/sb for x in vb]
+    owner = []
+    ta = tb = 0
+    for i in range(n):
+        if va[i] >= vb[i]:
+            owner.append('A'); ta += va[i]
+        else:
+            owner.append('B'); tb += vb[i]
+    from_, to_ = ('A', 'B') if ta > tb else ('B', 'A')
+    order = sorted(range(n), key=lambda i: (va[i]/vb[i]) if from_ == 'A' else (vb[i]/va[i]))
+    for i in order:
+        if abs(ta - tb) < 1e-9: break
+        if from_ == 'A' and owner[i] == 'A':
+            owner[i] = 'B'; ta -= va[i]; tb += vb[i]
+        elif from_ == 'B' and owner[i] == 'B':
+            owner[i] = 'A'; tb -= vb[i]; ta += va[i]
+    return owner, ta, tb
+
+print(adjusted_winner([6,4,3,2], [5,5,4,1]))
+`},
+};
+
+/* ============================================================
+   Utilities
+   ============================================================ */
+function parseNums(s){
+ const a=s.trim().split(/[\s,]+/).filter(Boolean).map(Number);
+ if(!a.length||a.some(x=>!Number.isFinite(x)))throw Error('Enter space or comma separated numbers.');
+ return a;
+}
+function fmtNum(x,d=4){
+ if(!Number.isFinite(x))return String(x);
+ if(Math.abs(x)<1e-14)return '0';
+ if(Math.abs(x)>=1e6||Math.abs(x)<1e-4)return x.toExponential(d-1);
+ return parseFloat(x.toFixed(d)).toString();
+}
+function popcount(x){let c=0;while(x){c+=x&1;x>>=1}return c}
+function rngFactory(seed){let s=seed>>>0;return ()=>{s=(s*1103515245+12345)&0x7fffffff;return s/0x7fffffff}}
+function scatterSVG(points,width=700,height=250){
+ if(!points.length)return '<svg class="plot" viewBox="0 0 '+width+' '+height+'"></svg>';
+ const xs=points.map(p=>p[0]),ys=points.map(p=>p[1]);
+ const xMin=Math.min(...xs),xMax=Math.max(...xs);
+ const yMin=Math.min(...ys),yMax=Math.max(...ys);
+ const padL=40,padR=15,padT=15,padB=30;
+ const px=x=>padL+(x-xMin)/(xMax-xMin||1)*(width-padL-padR);
+ const py=y=>height-padB-(y-yMin)/(yMax-yMin||1)*(height-padT-padB);
+ let out=`<line x1="${padL}" y1="${height-padB}" x2="${width-padR}" y2="${height-padB}" stroke="var(--line2)"/>`;
+ out+=`<line x1="${padL}" y1="${padT}" x2="${padL}" y2="${height-padB}" stroke="var(--line2)"/>`;
+ for(const p of points){
+  out+=`<circle cx="${px(p[0]).toFixed(1)}" cy="${py(p[1]).toFixed(1)}" r="4" fill="var(--accent)" opacity="0.8"/>`;
+ }
+ return `<svg class="plot" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">${out}</svg>`;
+}
+
+/* ============================================================
+   Tic-tac-toe helpers (used by game-state and minimax labs)
+   ============================================================ */
+function ttWinner(b){
+ const lines=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+ for(const [a,b1,c] of lines){ if(b[a]!=='.'&&b[a]===b[b1]&&b[a]===b[c])return b[a]; }
+ if(b.every(x=>x!=='.'))return 'draw';
+ return null;
+}
+function ttMinimax(board, turn, memo){
+ const key=board.join('')+turn;
+ if(memo[key]!==undefined)return memo[key];
+ const w=ttWinner(board);
+ if(w==='X')return memo[key]={score:1,best:-1};
+ if(w==='O')return memo[key]={score:-1,best:-1};
+ if(w==='draw')return memo[key]={score:0,best:-1};
+ let bestScore=turn==='X'?-2:2;
+ let bestMove=-1;
+ for(let i=0;i<9;i++){
+  if(board[i]!=='.')continue;
+  board[i]=turn;
+  const r=ttMinimax(board,turn==='X'?'O':'X',memo);
+  board[i]='.';
+  if(turn==='X'){ if(r.score>bestScore){bestScore=r.score;bestMove=i} }
+  else { if(r.score<bestScore){bestScore=r.score;bestMove=i} }
+ }
+ return memo[key]={score:bestScore,best:bestMove};
+}
+function ttParse(s){
+ const cleaned=(s||'').replace(/[^XO.]/gi,'').toUpperCase().slice(0,9);
+ let b=(cleaned||'.'.repeat(9)).padEnd(9,'.').split('');
+ // If no X at all, default to empty
+ if(!b.includes('X')&&!b.includes('O'))b='.'.repeat(9).split('');
+ return b;
+}
+function ttDisplay(b){
+ const rows=[];
+ for(let r=0;r<3;r++)rows.push(b.slice(r*3,r*3+3).join(' '));
+ return rows.join('\n');
+}
+
+/* ============================================================
+   Labs
+   ============================================================ */
+function demoGameState(text){
+ // Count reachable tic-tac-toe positions
+ const seen=new Set();
+ function rec(b,turn){
+  const key=b.join('')+turn;
+  if(seen.has(key))return;
+  seen.add(key);
+  if(ttWinner(b)||!b.includes('.'))return;
+  for(let i=0;i<9;i++){
+   if(b[i]==='.'){b[i]=turn;rec(b,turn==='X'?'O':'X');b[i]='.';}
+  }
+ }
+ rec('.'.repeat(9).split(''),'X');
+ // Count games
+ let games=0,draws=0;
+ function recGames(b,turn){
+  const w=ttWinner(b);
+  if(w){if(w==='draw')draws++;return}
+  if(!b.includes('.')){draws++;return}
+  for(let i=0;i<9;i++){
+   if(b[i]==='.'){b[i]=turn;games++;recGames(b,turn==='X'?'O':'X');b[i]='.';}
+  }
+ }
+ recGames('.'.repeat(9).split(''),'X');
+ return {
+  encoded:`Reachable (board, turn) states: ${seen.size}\nGame tree edges (non-terminal positions): ${games}\nTerminal positions: ${draws + (games ? 0 : 0)}\n\nNote: this counts (board, turn) pairs, not just boards.`,
+  decoded:`Tic-tac-toe has about 5,478 legal boards. The full game tree is small enough for exact minimax.`
+ };
+}
+
+function demoMinimax(text){
+ const b=ttParse(text);
+ const memo={};
+ const turn=(b.filter(x=>x==='X').length<=b.filter(x=>x==='O').length)?'X':'O';
+ const r=ttMinimax(b,turn,memo);
+ const scoreLabel=r.score===1?'X wins':r.score===-1?'O wins':'Draw';
+ const moveLabel=r.best>=0?`cell ${r.best} (row ${Math.floor(r.best/3)+1}, col ${r.best%3+1})`:'none (terminal)';
+ return {
+  encoded:`Board:\n${ttDisplay(b)}\nTurn: ${turn}\n\nMinimax value: ${r.score} (${scoreLabel})\nBest move: ${moveLabel}\n\nMemorized states: ${Object.keys(memo).length}`,
+  decoded:`Minimax explores the full game tree from this position. The value is from X's perspective: +1 X wins, -1 O wins, 0 draw.`
+ };
+}
+
+function demoAlphaBeta(text){
+ const parts=text.trim().split(/\s+/).map(Number);
+ const depth=Math.max(1,Math.min(parts[0]||4,8));
+ const bf=Math.max(2,Math.min(parts[1]||3,6));
+ const seed=parts[2]||7;
+ const numLeaves=Math.pow(bf,depth);
+ if(numLeaves>200000)throw Error('Tree too large. Reduce depth or branching factor.');
+ const rand=rngFactory(seed);
+ const leaves=[];
+ for(let i=0;i<numLeaves;i++)leaves.push(Math.floor(rand()*200)-100);
+ let nodesNo=0;
+ function minimax(d,idx,max){
+  nodesNo++;
+  if(d===0)return leaves[idx];
+  if(max){
+   let v=-Infinity;
+   for(let i=0;i<bf;i++)v=Math.max(v,minimax(d-1,idx*bf+i,false));
+   return v;
+  } else {
+   let v=Infinity;
+   for(let i=0;i<bf;i++)v=Math.min(v,minimax(d-1,idx*bf+i,true));
+   return v;
+  }
+ }
+ const noPrune=minimax(depth,0,true);
+ let nodesAB=0;
+ function ab(d,idx,alpha,beta,max){
+  nodesAB++;
+  if(d===0)return leaves[idx];
+  if(max){
+   let v=-Infinity;
+   for(let i=0;i<bf;i++){
+    v=Math.max(v,ab(d-1,idx*bf+i,alpha,beta,false));
+    alpha=Math.max(alpha,v);
+    if(alpha>=beta)break;
+   }
+   return v;
+  } else {
+   let v=Infinity;
+   for(let i=0;i<bf;i++){
+    v=Math.min(v,ab(d-1,idx*bf+i,alpha,beta,true));
+    beta=Math.min(beta,v);
+    if(alpha>=beta)break;
+   }
+   return v;
+  }
+ }
+ const withPrune=ab(depth,0,-Infinity,Infinity,true);
+ return {
+  encoded:`Depth: ${depth}, branching: ${bf}, leaves: ${numLeaves}\nSeed: ${seed}\n\nMinimax value: ${noPrune}\nAlpha-beta value: ${withPrune}\n\nMinimax nodes: ${nodesNo}\nAlpha-beta nodes: ${nodesAB}\nReduction: ${((1-nodesAB/nodesNo)*100).toFixed(1)}%`,
+  decoded:`Alpha-beta returns the same value as minimax but visits fewer nodes. With random leaf values, the reduction is close to the theoretical best when move ordering is perfect.`
+ };
+}
+
+function demoMoveOrdering(text){
+ const parts=text.trim().split(/\s+/).map(Number);
+ const depth=Math.max(2,Math.min(parts[0]||4,7));
+ const bf=Math.max(2,Math.min(parts[1]||3,5));
+ const seed=parts[2]||7;
+ const numLeaves=Math.pow(bf,depth);
+ if(numLeaves>200000)throw Error('Tree too large. Reduce depth or branching factor.');
+ const rand=rngFactory(seed);
+ const leaves=[];
+ for(let i=0;i<numLeaves;i++)leaves.push(Math.floor(rand()*200)-100);
+ // Random ordering
+ let nodesRandom=0;
+ function abRandom(d,idx,alpha,beta,max){
+  nodesRandom++;
+  if(d===0)return leaves[idx];
+  if(max){
+   let v=-Infinity;
+   for(let i=0;i<bf;i++){
+    v=Math.max(v,abRandom(d-1,idx*bf+i,alpha,beta,false));
+    alpha=Math.max(alpha,v);
+    if(alpha>=beta)break;
+   }
+   return v;
+  } else {
+   let v=Infinity;
+   for(let i=0;i<bf;i++){
+    v=Math.min(v,abRandom(d-1,idx*bf+i,alpha,beta,true));
+    beta=Math.min(beta,v);
+    if(alpha>=beta)break;
+   }
+   return v;
+  }
+ }
+ abRandom(depth,0,-Infinity,Infinity,true);
+ // Best ordering: at each node, sort children by their true value
+ // For simplicity, order leaves within each subtree by their max/min
+ function leafIdx(node,d,idx){
+  // returns range of leaf indices
+  if(d===0)return idx;
+  return leafIdx(node,d-1,idx*bf);
+ }
+ let nodesOrdered=0;
+ function abOrdered(d,idx,alpha,beta,max){
+  nodesOrdered++;
+  if(d===0)return leaves[idx];
+  // Sort children by their minimax value
+  const childVals=[];
+  for(let i=0;i<bf;i++){
+   childVals.push({i,v:subMinimax(d-1,idx*bf+i,!max)});
+  }
+  childVals.sort((a,b)=>max?b.v-a.v:a.v-b.v);
+  if(max){
+   let v=-Infinity;
+   for(const {i} of childVals){
+    v=Math.max(v,abOrdered(d-1,idx*bf+i,alpha,beta,false));
+    alpha=Math.max(alpha,v);
+    if(alpha>=beta)break;
+   }
+   return v;
+  } else {
+   let v=Infinity;
+   for(const {i} of childVals){
+    v=Math.min(v,abOrdered(d-1,idx*bf+i,alpha,beta,true));
+    beta=Math.min(beta,v);
+    if(alpha>=beta)break;
+   }
+   return v;
+  }
+ }
+ function subMinimax(d,idx,max){
+  if(d===0)return leaves[idx];
+  if(max){
+   let v=-Infinity;
+   for(let i=0;i<bf;i++)v=Math.max(v,subMinimax(d-1,idx*bf+i,false));
+   return v;
+  } else {
+   let v=Infinity;
+   for(let i=0;i<bf;i++)v=Math.min(v,subMinimax(d-1,idx*bf+i,true));
+   return v;
+  }
+ }
+ abOrdered(depth,0,-Infinity,Infinity,true);
+ return {
+  encoded:`Depth: ${depth}, branching: ${bf}, leaves: ${numLeaves}\n\nNodes (random order): ${nodesRandom}\nNodes (perfect order): ${nodesOrdered}\nReduction: ${((1-nodesOrdered/nodesRandom)*100).toFixed(1)}%`,
+  decoded:`Perfect move ordering achieves the O(b^(d/2)) best case. Real engines approximate this with killer moves, history heuristics and transposition table moves.`
+ };
+}
+
+function demoTransposition(text){
+ const parts=text.trim().split(/\s+/).map(Number);
+ const depth=Math.max(2,Math.min(parts[0]||6,10));
+ const bf=Math.max(2,Math.min(parts[1]||3,5));
+ const counts={};
+ let nodes=0;
+ function visit(state,d){
+  nodes++;
+  const key=state.slice().sort((a,b)=>a-b).join(',');
+  counts[key]=(counts[key]||0)+1;
+  if(d===0)return;
+  for(let i=0;i<bf;i++)visit([...state,i],d-1);
+ }
+ visit([],depth);
+ const unique=Object.keys(counts).length;
+ const repeatStates=Object.values(counts).filter(c=>c>1).length;
+ let repeats=0;
+ for(const k in counts)repeats+=counts[k]-1;
+ return {
+  encoded:`Depth: ${depth}, branching: ${bf}\nTotal nodes visited: ${nodes}\nUnique states (as multisets): ${unique}\nStates reached more than once: ${repeatStates}\nTotal recomputations avoided: ${repeats}`,
+  decoded:`A transposition table would store ${unique} entries and avoid ${repeats} recomputations. In real games the savings are larger because many move orders lead to the same position.`
+ };
+}
+
+function demoMcts(text){
+ const parts=text.trim().split(/\s+/).map(Number);
+ const iters=Math.max(10,Math.min(parts[0]||1000,50000));
+ const c=parts[1]||1.41;
+ const means=[0.3,0.5,0.8];
+ const visits=[0,0,0];
+ const sums=[0,0,0];
+ const rand=rngFactory(42);
+ for(let t=0;t<iters;t++){
+  let best=-Infinity,bi=0;
+  for(let i=0;i<3;i++){
+   const u=visits[i]===0?Infinity:(sums[i]/visits[i])+c*Math.sqrt(Math.log(t+1)/visits[i]);
+   if(u>best){best=u;bi=i}
+  }
+  visits[bi]++;
+  sums[bi]+=rand()<means[bi]?1:0;
+ }
+ const est=visits.map((v,i)=>v?sums[i]/v:0);
+ const best=visits.indexOf(Math.max(...visits));
+ return {
+  encoded:`Iterations: ${iters}, c = ${c}\n\nArm visits: [${visits.join(', ')}]\nEstimated means: [${est.map(x=>x.toFixed(3)).join(', ')}]\nTrue means: [${means.join(', ')}]\n\nMost-visited arm: ${best} (true mean ${means[best]})`,
+  decoded:`MCTS/UCT balances exploration (uncertain arms) with exploitation (arms with high average reward). The best arm gets most visits.`
+ };
+}
+
+function demoNim(text){
+ const heaps=parseNums(text);
+ if(heaps.some(h=>h<0||!Number.isInteger(h)))throw Error('Heaps must be non-negative integers.');
+ const xor=heaps.reduce((a,b)=>a^b,0);
+ let out=`Heaps: [${heaps.join(', ')}]\nNim-sum: ${xor}\n\n`;
+ if(xor===0)out+='Position is a P-position (LOSING for the player to move with optimal play).';
+ else{
+  out+='Position is an N-position (WINNING).\nWinning moves (reduce a heap to make the XOR zero):\n';
+  let any=false;
+  for(let i=0;i<heaps.length;i++){
+   const target=heaps[i]^xor;
+   if(target<heaps[i]){
+    out+=`  Reduce heap ${i+1} from ${heaps[i]} to ${target} (take ${heaps[i]-target})\n`;
+    any=true;
+   }
+  }
+  if(!any)out+='  (none)';
+ }
+ return {encoded:out, decoded:`The nim-sum (bitwise XOR of heap sizes) determines the winner. If zero, the position is a P-position. Otherwise move to make the XOR zero.`};
+}
+
+function demoSG(text){
+ const lines=text.trim().split(/\n/);
+ const moves=lines[0].split(/[\s,]+/).filter(Boolean).map(Number);
+ const n=Math.max(1,Math.min(parseInt(lines[1])||20,60));
+ const G=[0];
+ for(let i=1;i<=n;i++){
+  const reach=new Set();
+  for(const m of moves)if(i-m>=0)reach.add(G[i-m]);
+  let g=0;while(reach.has(g))g++;
+  G.push(g);
+ }
+ const pPositions=G.map((g,i)=>g===0?i:null).filter(x=>x!==null);
+ return {
+  encoded:`Allowed moves: [${moves.join(', ')}]\n\nGrundy numbers G(0..${n}):\n  ${G.join(', ')}\n\nP-positions (G = 0): ${pPositions.join(', ')}`,
+  decoded:`Sprague-Grundy: each impartial game is equivalent to a Nim heap of size G(n). The disjunctive sum has Grundy value XOR of the components.`
+ };
+}
+
+function demoMisere(text){
+ const heaps=parseNums(text);
+ const xor=heaps.reduce((a,b)=>a^b,0);
+ const allOnes=heaps.every(h=>h<=1);
+ let status;
+ if(allOnes)status=heaps.length%2===1?'P-position (LOSING for player to move)':'N-position (WINNING for player to move)';
+ else status=xor===0?'P-position (LOSING for player to move)':'N-position (WINNING for player to move)';
+ return {
+  encoded:`Heaps: [${heaps.join(', ')}]\nNim-sum: ${xor}\nAll heaps ≤ 1: ${allOnes}\n\n${status}`,
+  decoded:`Misère Nim: if all heaps are size 1, the parity of the number of heaps decides. Otherwise the normal nim-sum rule applies (P-position iff XOR = 0).`
+ };
+}
+
+function demoNash(text){
+ const lines=text.trim().split(/\n/).filter(Boolean);
+ if(lines.length<2)throw Error('Enter two lines: A\'s payoffs (4 numbers), then B\'s payoffs (4 numbers).');
+ const A=lines[0].split(/[\s,]+/).filter(Boolean).map(Number);
+ const B=lines[1].split(/[\s,]+/).filter(Boolean).map(Number);
+ if(A.length!==4||B.length!==4)throw Error('Expected 2x2 game: 4 numbers per line.');
+ const a=[[A[0],A[1]],[A[2],A[3]]];
+ const b=[[B[0],B[1]],[B[2],B[3]]];
+ const eqs=[];
+ // Pure
+ for(let i=0;i<2;i++)for(let j=0;j<2;j++){
+  const aOk=a[i][j]>=a[1-i][j];
+  const bOk=b[i][j]>=b[i][1-j];
+  if(aOk&&bOk)eqs.push({type:'pure',i,j});
+ }
+ // Mixed
+ const dq=a[0][0]-a[0][1]-a[1][0]+a[1][1];
+ if(Math.abs(dq)>1e-12){
+  const q=(a[1][1]-a[0][1])/dq;
+  const dp=b[0][0]-b[0][1]-b[1][0]+b[1][1];
+  if(Math.abs(dp)>1e-12){
+   const p=(b[1][1]-b[1][0])/dp;
+   if(p>=-1e-9&&p<=1+1e-9&&q>=-1e-9&&q<=1+1e-9){
+    // Verify indifference
+    const u1=p*a[0][0]+(1-p)*a[0][1];
+    const u2=p*a[1][0]+(1-p)*a[1][1];
+    if(Math.abs(u1-u2)<1e-6)eqs.push({type:'mixed',p:Math.max(0,Math.min(1,p)),q:Math.max(0,Math.min(1,q))});
+   }
+  }
+ }
+ let out='Payoff matrix A:\n  '+a.map(r=>r.join('  ')).join('\n  ')+'\nPayoff matrix B:\n  '+b.map(r=>r.join('  ')).join('\n  ')+'\n\nEquilibria:\n';
+ if(!eqs.length)out+='  (none found — this can happen for degenerate games)';
+ for(const e of eqs){
+  if(e.type==='pure')out+=`  Pure: player 1 → row ${e.i+1}, player 2 → col ${e.j+1}\n`;
+  else out+=`  Mixed: player 1 → (${e.p.toFixed(3)}, ${(1-e.p).toFixed(3)}), player 2 → (${e.q.toFixed(3)}, ${(1-e.q).toFixed(3)})\n`;
+ }
+ return {encoded:out, decoded:`Support enumeration for 2x2 games. Pure equilibria are checked first, then the mixed equilibrium via the indifference conditions.`};
+}
+
+function demoRegret(text){
+ const iters=Math.max(50,Math.min(parseInt(text.trim())||2000,100000));
+ const payoff=(a,b)=>{ if(a===b)return 0; return ((a-b)%3+3)%3===1?1:-1; };
+ const R=[0,0,0];
+ const S=[0,0,0];
+ const rand=rngFactory(123);
+ for(let t=0;t<iters;t++){
+  const pos=R.map(r=>Math.max(0,r));
+  const sum=pos.reduce((a,b)=>a+b,0);
+  let strat;
+  if(sum===0)strat=[1/3,1/3,1/3];
+  else strat=pos.map(p=>p/sum);
+  let r=rand();
+  let a=0;
+  for(let i=0;i<3;i++){if(r<strat[i]){a=i;break}r-=strat[i]}
+  const b=Math.floor(rand()*3);
+  const u=payoff(a,b);
+  for(let i=0;i<3;i++)R[i]+=payoff(i,b)-u;
+  for(let i=0;i<3;i++)S[i]+=strat[i];
+ }
+ const avg=S.map(s=>s/iters);
+ return {
+  encoded:`Iterations: ${iters}\nActions: [R, P, S]\n\nCumulative regrets: [${R.map(x=>x.toFixed(1)).join(', ')}]\nAverage strategy:\n  R: ${avg[0].toFixed(3)}\n  P: ${avg[1].toFixed(3)}\n  S: ${avg[2].toFixed(3)}`,
+  decoded:`Regret matching converges to a Nash equilibrium of rock-paper-scissors: uniform random. The average strategy approaches (1/3, 1/3, 1/3).`
+ };
+}
+
+function demoShapley(text){
+ const lines=text.trim().split(/\n/).filter(Boolean);
+ const weights=lines[0].split(/[\s,]+/).filter(Boolean).map(Number);
+ const quota=parseInt(lines[1])||Math.ceil(weights.reduce((a,b)=>a+b,0)/2);
+ const n=weights.length;
+ if(n<1||n>12)throw Error('Use 1 to 12 players.');
+ const fact=[1];
+ for(let i=1;i<=n;i++)fact[i]=fact[i-1]*i;
+ const sv=new Array(n).fill(0);
+ for(let mask=0;mask<(1<<n);mask++){
+  const size=popcount(mask);
+  let wS=0;
+  for(let i=0;i<n;i++)if(mask>>i&1)wS+=weights[i];
+  const vS=wS>=quota?1:0;
+  for(let i=0;i<n;i++){
+   if(mask>>i&1)continue;
+   const wNew=wS+weights[i];
+   const vNew=wNew>=quota?1:0;
+   sv[i]+=fact[size]*fact[n-size-1]/fact[n]*(vNew-vS);
+  }
+ }
+ return {
+  encoded:`Weights: [${weights.join(', ')}]\nQuota: ${quota}\nPlayers: ${n}\n\nShapley values:\n${sv.map((v,i)=>`  Player ${i+1} (weight ${weights[i]}): ${v.toFixed(4)}`).join('\n')}\nSum: ${sv.reduce((a,b)=>a+b,0).toFixed(4)}`,
+  decoded:`The Shapley value is the unique fair division satisfying efficiency, symmetry, dummy and additivity. In a simple voting game it measures each player's average marginal contribution to winning coalitions.`
+ };
+}
+
+function demoVcg(text){
+ const bids=parseNums(text);
+ if(bids.length<1)throw Error('Enter at least one bid.');
+ const order=bids.map((v,i)=>({v,i})).sort((a,b)=>b.v-a.v);
+ const winner=order[0];
+ const payment=order[1]?order[1].v:0;
+ return {
+  encoded:`Bids: [${bids.join(', ')}]\n\nWinner: bidder ${winner.i+1} (value ${winner.v})\nPayment: ${payment}\nUtility: ${winner.v-payment}\n\nSocial welfare: ${winner.v}`,
+  decoded:`VCG: the winner pays the externality they impose on others. In a single-item auction that is the second-highest bid. Truthful bidding is a dominant strategy.`
+ };
+}
+
+function demoGsp(text){
+ const lines=text.trim().split(/\n/).filter(Boolean);
+ if(lines.length<2)throw Error('Enter two lines: CTRs, then bids.');
+ const ctrs=lines[0].split(/[\s,]+/).filter(Boolean).map(Number);
+ const bids=lines[1].split(/[\s,]+/).filter(Boolean).map(Number);
+ const n=Math.min(ctrs.length,bids.length);
+ const order=bids.map((b,i)=>({b,i})).sort((a,b)=>b.b-a.b).slice(0,n);
+ let revenue=0;
+ const rows=[];
+ for(let k=0;k<n;k++){
+  const pay=k+1<n?order[k+1].b:0;
+  const util=ctrs[k]*(order[k].b-pay);
+  revenue+=ctrs[k]*pay;
+  rows.push(`  Pos ${k+1}: bidder ${order[k].i+1} (bid ${order[k].b}, pays ${pay}, CTR ${ctrs[k]}, utility ${util.toFixed(2)})`);
+ }
+ return {
+  encoded:`CTRs: [${ctrs.join(', ')}]\nBids: [${bids.join(', ')}]\n\n${rows.join('\n')}\n\nTotal revenue: ${revenue.toFixed(2)}`,
+  decoded:`GSP: each bidder gets a position and pays the next-highest bid times the position's CTR. Not incentive-compatible in general, but used by most search ad auctions.`
+ };
+}
+
+function demoTtc(text){
+ const lines=text.trim().split(/\n/).filter(Boolean);
+ if(!lines.length)throw Error('Enter one line per agent with their preference order.');
+ const n=lines.length;
+ if(n<2||n>8)throw Error('Use 2 to 8 agents.');
+ const prefs=lines.map(l=>l.split(/[\s,]+/).filter(Boolean).map(x=>parseInt(x)-1));
+ // Validate: each preference list should be a permutation of 0..n-1
+ for(const p of prefs){
+  if(p.length!==n||new Set(p).size!==n||p.some(x=>x<0||x>=n))throw Error('Each agent must rank all items 1..'+n+' exactly once.');
+ }
+ const owner={};
+ for(let i=0;i<n;i++)owner[i]=i;
+ const remainingAgents=new Set([...Array(n).keys()]);
+ const remainingItems=new Set([...Array(n).keys()]);
+ const assignment=new Array(n).fill(-1);
+ const rounds=[];
+ let safety=0;
+ while(remainingAgents.size>0&&safety++<100){
+  const pointsTo={};
+  for(const a of remainingAgents){
+   for(const it of prefs[a]){ if(remainingItems.has(it)){pointsTo[a]=it;break} }
+  }
+  // Build next[] for functional graph
+  const next=new Map();
+  for(const a of remainingAgents){
+   const it=pointsTo[a];
+   if(it===undefined){next.set(a,undefined);continue}
+   const ow=owner[it];
+   if(remainingAgents.has(ow))next.set(a,ow);
+   else next.set(a,undefined);
+  }
+  // Find cycles
+  const state=new Map();
+  for(const a of remainingAgents)state.set(a,0);
+  const cycles=[];
+  for(const start of remainingAgents){
+   if(state.get(start)!==0)continue;
+   const path=[];
+   const idx=new Map();
+   let cur=start;
+   while(cur!==undefined&&state.get(cur)===0){
+    state.set(cur,1);
+    idx.set(cur,path.length);
+    path.push(cur);
+    cur=next.get(cur);
+   }
+   if(cur!==undefined&&state.get(cur)===1){
+    cycles.push(path.slice(idx.get(cur)));
+   }
+   for(const a of path)state.set(a,2);
+  }
+  if(!cycles.length)break;
+  const info=[];
+  for(const cyc of cycles){
+   for(const a of cyc){
+    const it=pointsTo[a];
+    assignment[a]=it;
+    info.push(`Agent ${a+1} → item ${it+1}`);
+    remainingAgents.delete(a);
+    remainingItems.delete(it);
+   }
+  }
+  rounds.push(info);
+ }
+ return {
+  encoded:`Preferences:\n${prefs.map((p,i)=>`  Agent ${i+1}: [${p.map(x=>x+1).join(', ')}]`).join('\n')}\n\nAllocation:\n${assignment.map((it,i)=>`  Agent ${i+1} → item ${it+1}`).join('\n')}\n\nRounds:\n${rounds.map((r,i)=>`  Round ${i+1}: ${r.join(', ')}`).join('\n')}`,
+  decoded:`Top Trading Cycles: agents point to their favorite remaining item, items point to owners. Cycles are executed. TTC is strategy-proof and Pareto efficient.`
+ };
+}
+
+function demoBorda(text){
+ const lines=text.trim().split(/\n/).filter(Boolean);
+ if(!lines.length)throw Error('Enter one ranking per line.');
+ const rankings=lines.map(l=>l.split(/[\s,]+/).filter(Boolean));
+ const n=rankings[0].length;
+ const scores={};
+ for(const r of rankings){
+  if(r.length!==n)throw Error('All rankings must have the same length.');
+  for(let i=0;i<r.length;i++)scores[r[i]]=(scores[r[i]]||0)+(n-i-1);
+ }
+ const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+ return {
+  encoded:`Rankings:\n${rankings.map((r,i)=>`  Voter ${i+1}: ${r.join(' > ')}`).join('\n')}\n\nBorda scores:\n${sorted.map(([c,s])=>`  ${c}: ${s}`).join('\n')}\n\nWinner: ${sorted[0][0]}`,
+  decoded:`Borda count: each candidate gets points equal to the number of candidates ranked below them on each ballot. Highest total wins. Violates the majority criterion and can be manipulated by burying.`
+ };
+}
+
+function demoCondorcetSchulze(text){
+ const lines=text.trim().split(/\n/).filter(Boolean);
+ if(!lines.length)throw Error('Enter one ranking per line.');
+ const rankings=lines.map(l=>l.split(/[\s,]+/).filter(Boolean));
+ const candidates=[...new Set(rankings.flat())].sort();
+ const n=candidates.length;
+ const idx=Object.fromEntries(candidates.map((c,i)=>[c,i]));
+ const P=Array.from({length:n},()=>new Array(n).fill(0));
+ for(const r of rankings){
+  for(let i=0;i<r.length;i++)for(let j=i+1;j<r.length;j++){
+   P[idx[r[i]]][idx[r[j]]]++;
+  }
+ }
+ // Condorcet winner
+ let condorcet=null;
+ for(let i=0;i<n;i++){
+  let winsAll=true;
+  for(let j=0;j<n;j++)if(i!==j&&P[i][j]<=P[j][i]){winsAll=false;break}
+  if(winsAll)condorcet=candidates[i];
+ }
+ // Schulze
+ const d=Array.from({length:n},(_,i)=>Array.from({length:n},(_,j)=>i===j?0:(P[i][j]>P[j][i]?P[i][j]:-Infinity)));
+ for(let k=0;k<n;k++)for(let i=0;i<n;i++)for(let j=0;j<n;j++){
+  if(d[i][k]>-Infinity&&d[k][j]>-Infinity){
+   d[i][j]=Math.max(d[i][j],Math.min(d[i][k],d[k][j]));
+  }
+ }
+ const wins=d.map((row,i)=>row.filter((x,j)=>i!==j&&x>d[j][i]).length);
+ const order=candidates.map((c,i)=>({c,w:wins[i]})).sort((a,b)=>b.w-a.w);
+ const matrix=P.map((row,i)=>`  ${candidates[i]}: ${row.map((x,j)=>i===j?'-':x).join(' ')}`).join('\n');
+ return {
+  encoded:`Rankings:\n${rankings.map((r,i)=>`  Voter ${i+1}: ${r.join(' > ')}`).join('\n')}\n\nPairwise matrix (row beats column):\n${matrix}\n\nCondorcet winner: ${condorcet||'(none)'}\nSchulze ranking: ${order.map(x=>x.c).join(' > ')}`,
+  decoded:`Condorcet: a candidate who beats every other head-to-head. Schulze: order by the strength of the strongest path of pairwise victories.`
+ };
+}
+
+function demoIrv(text){
+ const lines=text.trim().split(/\n/).filter(Boolean);
+ if(!lines.length)throw Error('Enter one ranking per line.');
+ let ballots=lines.map(l=>l.split(/[\s,]+/).filter(Boolean));
+ const eliminated=new Set();
+ const rounds=[];
+ let safety=0;
+ while(safety++<20){
+  const counts={};
+  for(const b of ballots){
+   for(const c of b){
+    if(!eliminated.has(c)){counts[c]=(counts[c]||0)+1;break}
+   }
+  }
+  const total=Object.values(counts).reduce((a,b)=>a+b,0);
+  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  rounds.push(sorted);
+  if(!sorted.length)return {encoded:'No candidates remain.',decoded:'All candidates were eliminated.'};
+  if(sorted[0][1]>total/2){
+   return {
+    encoded:`Ballots:\n${lines.map((l,i)=>`  ${i+1}: ${l}`).join('\n')}\n\nRounds:\n${rounds.map((r,i)=>`  Round ${i+1}: ${r.map(([c,v])=>`${c}=${v}`).join(', ')}`).join('\n')}\n\nWinner: ${sorted[0][0]}`,
+    decoded:`Instant-runoff voting eliminates the candidate with the fewest first-place votes and transfers their votes. Repeat until someone has a majority.`
+   };
+  }
+  if(sorted.length<=1)break;
+  eliminated.add(sorted[sorted.length-1][0]);
+ }
+ return {
+  encoded:`Ballots:\n${lines.map((l,i)=>`  ${i+1}: ${l}`).join('\n')}\n\nRounds:\n${rounds.map((r,i)=>`  Round ${i+1}: ${r.map(([c,v])=>`${c}=${v}`).join(', ')}`).join('\n')}\n\n(no majority winner)`,
+  decoded:`IRV did not produce a majority winner. Check the ballots.`
+ };
+}
+
+function demoFairDivision(text){
+ const lines=text.trim().split(/\n/).filter(Boolean);
+ if(lines.length<2)throw Error('Enter two lines: A\'s valuations, then B\'s valuations.');
+ const a=lines[0].split(/[\s,]+/).filter(Boolean).map(Number);
+ const b=lines[1].split(/[\s,]+/).filter(Boolean).map(Number);
+ if(a.length!==b.length)throw Error('Both parties must value the same number of items.');
+ const n=a.length;
+ const sa=a.reduce((x,y)=>x+y,0),sb=b.reduce((x,y)=>x+y,0);
+ const va=a.map(x=>100*x/sa),vb=b.map(x=>100*x/sb);
+ const owner=new Array(n);
+ let ta=0,tb=0;
+ for(let i=0;i<n;i++){
+  if(va[i]>=vb[i]){owner[i]='A';ta+=va[i]}
+  else{owner[i]='B';tb+=vb[i]}
+ }
+ const from=ta>tb?'A':'B';
+ const order=[...Array(n).keys()].filter(i=>owner[i]===from).sort((i,j)=>{
+  if(from==='A')return (va[i]/vb[i])-(va[j]/vb[j]);
+  return (vb[i]/va[i])-(vb[j]/va[j]);
+ });
+ for(const i of order){
+  if(Math.abs(ta-tb)<1e-9)break;
+  if(from==='A'){owner[i]='B';ta-=va[i];tb+=vb[i]}
+  else{owner[i]='A';tb-=vb[i];ta+=va[i]}
+ }
+ return {
+  encoded:`A's valuations: [${a.join(', ')}]\nB's valuations: [${b.join(', ')}]\n\nNormalized: A=[${va.map(x=>x.toFixed(1)).join(', ')}], B=[${vb.map(x=>x.toFixed(1)).join(', ')}]\n\nAllocation:\n${[...Array(n).keys()].map(i=>`  Item ${i+1}: ${owner[i]}`).join('\n')}\n\nA's total: ${ta.toFixed(2)}\nB's total: ${tb.toFixed(2)}`,
+  decoded:`Adjusted Winner: give each item to the higher valuer, then transfer items from the advantaged party to equalize. Envy-free and Pareto optimal for two parties.`
+ };
+}
+
+/* ============================================================
+   Lab dispatcher
+   ============================================================ */
+function runLab(l,initial){
+ const input=$('#labInput').value;
+ let res;
+ try{
+  if(!initial){$('#labEncoded').textContent='Running…';$('#labDecoded').textContent=''}
+  switch(l.demo){
+   case'game-state':res=demoGameState(input);break;
+   case'minimax':res=demoMinimax(input);break;
+   case'alpha-beta':res=demoAlphaBeta(input);break;
+   case'move-ordering':res=demoMoveOrdering(input);break;
+   case'transposition-tables':res=demoTransposition(input);break;
+   case'mcts-uct':res=demoMcts(input);break;
+   case'nim':res=demoNim(input);break;
+   case'sprague-grundy':res=demoSG(input);break;
+   case'misere':res=demoMisere(input);break;
+   case'nash-equilibrium':res=demoNash(input);break;
+   case'regret-matching':res=demoRegret(input);break;
+   case'shapley':res=demoShapley(input);break;
+   case'vcg':res=demoVcg(input);break;
+   case'gsp':res=demoGsp(input);break;
+   case'ttc':res=demoTtc(input);break;
+   case'borda':res=demoBorda(input);break;
+   case'condorcet-schulze':res=demoCondorcetSchulze(input);break;
+   case'irv':res=demoIrv(input);break;
+   case'fair-division':res=demoFairDivision(input);break;
+   default:throw Error('No interactive implementation is available for this lesson.');
+  }
+ }catch(e){
+  res={encoded:'Input or runtime error',decoded:e.message};
+ }
+ const el=$('#labEncoded');
+ if(res.html){el.innerHTML=res.html+'\n\n'+res.encoded}else{el.textContent=res.encoded}
+ $('#labDecoded').textContent=res.decoded;
+ if(!initial)toast('Lab complete');
+}
+
+/* ============================================================
+   State and shell
+   ============================================================ */
+const state={page:'home',current:null,completed:new Set(),bookmarks:new Set(),theme:'system',drafts:{}};
+const $=s=>document.querySelector(s);
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function toast(msg){const el=$('#toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1900)}
+function save(){try{localStorage.setItem('az-game-theory-lab-v1',JSON.stringify({schemaVersion:1,completed:[...state.completed],bookmarks:[...state.bookmarks],theme:state.theme,current:state.current,drafts:state.drafts}))}catch(e){}}
+function load(){try{const d=JSON.parse(localStorage.getItem('az-game-theory-lab-v1')||'null');if(!d||d.schemaVersion!==1)return;
+ state.completed=new Set((d.completed||[]).filter(id=>byId[id]));
+ state.bookmarks=new Set((d.bookmarks||[]).filter(id=>byId[id]));
+ state.theme=['system','light','dark'].includes(d.theme)?d.theme:'system';
+ state.current=byId[d.current]?d.current:null;
+ state.drafts=d.drafts&&typeof d.drafts==='object'?d.drafts:{};}catch(e){}}
+function applyTheme(){let t=state.theme;if(t==='system')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';document.documentElement.dataset.theme=t;$('#themeSelect').value=state.theme}
+function getChapter(id){return CHAPTERS.find(c=>c.ids.includes(id))||CHAPTERS[0]}
+function progress(){
+ const n=state.completed.size,t=LESSONS.length;
+ $('#progressText').textContent=`${n} / ${t}`;
+ $('#progressFill').style.width=(n/t*100)+'%';
+ $('#lessonCount').textContent=t+' lessons';
+ $('#catalogCount').textContent=`${CHAPTERS.length} chapters · ${t} lessons · ${LESSONS.filter(l=>l.demo&&l.demo!=='none').length} labs`;
+ $('#progressBar').setAttribute('aria-valuenow',String(Math.round(n/t*100)));
+}
+function renderTree(){
+ const q=$('#searchInput').value.toLowerCase().trim(),ch=$('#chapterFilter').value;
+ const root=$('#courseTree');root.textContent='';
+ for(const c of CHAPTERS){
+  if(ch!=='all'&&c.id!==ch)continue;
+  const rows=c.ids.map(id=>byId[id]).filter(x=>x&&(!q||(x.title+' '+x.summary+' '+x.kind+' '+c.title).toLowerCase().includes(q)));
+  if(!rows.length)continue;
+  const group=document.createElement('section');
+  const label=document.createElement('div');label.className='group-label';
+  label.innerHTML=`<span>${esc(c.title)}</span><span>${rows.length}</span>`;
+  group.append(label);
+  rows.forEach(l=>{
+   const b=document.createElement('button');b.type='button';
+   b.className='link'+(state.current===l.id?' active':'');
+   b.dataset.lesson=l.id;
+   b.innerHTML=`<span class="num">${String(LESSONS.indexOf(l)+1).padStart(2,'0')}</span><span class="name">${esc(l.title)}</span>${state.completed.has(l.id)?'<span class="done" aria-label="completed">✓</span>':''}`;
+   group.append(b);
+  });
+  root.append(group);
+ }
+ if(!root.children.length)root.innerHTML='<p class="muted">No matching lessons. Try another search.</p>';
+ progress();
+}
+function listToHTML(a){return `<ol class="steps">${a.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>`}
+function refsHTML(r){return r&&r.length?`<div class="references">${r.map(x=>`<a target="_blank" rel="noopener noreferrer" href="${esc(x[1])}">${esc(x[0])} ↗</a>`).join('')}</div>`:'<p class="muted">See the recommended textbooks and papers for a full treatment.</p>'}
+function codeRecord(l){if(l.codeKey==='none')return null;return CODE[l.codeKey]||CODE[l.demo]||null}
+function codeText(l){
+ const c=codeRecord(l);
+ if(c&&c.python)return c.python;
+ return '# CONCEPT OUTLINE, NOT EXECUTABLE PYTHON\n# Lesson: '+l.title+'\n\n# Core idea\n# '+String(l.summary||'').replace(/\n/g,'\n# ')+'\n\n# Pseudocode from the lesson\n'+String(l.pseudo||'').split('\n').map(x=>'# '+x).join('\n')+'\n';
+}
+function statusClass(l){return /Runnable/.test(l.status)?'good':'warn'}
+
+function renderLesson(id){
+ const l=byId[id];if(!l){renderHome();return}
+ state.page='lesson';state.current=id;
+ const c=getChapter(id);const index=LESSONS.indexOf(l);const next=LESSONS[(index+1)%LESSONS.length];
+ const hasDemo=l.demo&&l.demo!=='none';
+ const demoArea=hasDemo?`<section class="panel"><div class="panel-head"><h2>${esc(l.demoTitle||'Interactive teaching lab')}</h2><p>Everything runs in your browser. This is a teaching implementation, not a production solver.</p></div><div class="body"><div class="lab-top"><label for="labInput">Input</label><button class="btn" id="resetSample">Reset sample</button><button class="btn primary" id="runLab">Run lab</button></div><textarea class="lab-input" id="labInput" aria-label="Lab input">${esc(l.sample||'')}</textarea><div class="notice info"><strong>Format:</strong> see the sample for the expected format. Most labs take either a single number, a comma separated list, or lines of data.</div><div class="lab-cols"><div><div class="label">Output</div><div class="lab-output" id="labEncoded">Run the lab to see output.</div></div><div><div class="label">Explanation</div><div class="lab-output" id="labDecoded">Step notes appear here.</div></div></div></div></section>`:'';
+ const references=refsHTML(l.refs);
+ const code=state.drafts[id]??codeText(l);
+ $('#mainView').innerHTML=`<div class="breadcrumb">Game Theory &amp; Social Choice Lab / ${esc(c.title)}</div>
+<header class="header">
+ <div class="eyebrow">LESSON ${String(index+1).padStart(2,'0')} · ${esc(l.kind)}</div>
+ <h1>${esc(l.title)}</h1>
+ <p>${esc(l.summary)}</p>
+ <div class="tags"><span class="tag">Level ${l.level}</span><span class="tag ${statusClass(l)}">${esc(l.status)}</span><span class="tag">${esc(c.title.replace(/^\d+(\.\d+)?\s*/,''))}</span></div>
+ <div class="header-actions">
+  <button class="btn" id="bookmarkBtn">${state.bookmarks.has(id)?'★ Bookmarked':'☆ Bookmark'}</button>
+  <button class="btn primary" id="completeBtn">${state.completed.has(id)?'✓ Completed':'Mark complete'}</button>
+ </div>
+</header>
+<section class="panel"><div class="panel-head"><h2>1. Understand the idea</h2><p>Plain language and a mental picture</p></div><div class="body idea"><div><p>${esc(l.summary)}</p><p><strong>What problem it solves:</strong> ${esc(l.problem)}</p><div class="takeaway"><strong>Takeaway:</strong> ${esc(l.output)}</div></div><aside class="mental"><small>Mental picture</small><strong>${esc(l.mental)}</strong><p>${esc(l.mentalText)}</p></aside></div></section>
+<section class="panel"><div class="panel-head"><h2>2. Input and output</h2><p>Know what goes in and what comes out</p></div><div class="body two"><div class="mini"><h3>Input</h3><p>${esc(l.input)}</p></div><div class="mini"><h3>Output</h3><p>${esc(l.output)}</p></div></div></section>
+<section class="panel"><div class="panel-head"><h2>3. How it works</h2><p>Step by step, with the key rule that makes it correct</p></div><div class="body two"><div>${listToHTML(l.steps)}<div class="takeaway" style="margin-top:14px"><strong>Key rule:</strong> ${esc(l.invariant)}</div></div><pre class="pseudo">${esc(l.pseudo)}</pre></div><div class="table-wrap" style="margin-top:16px"><table><thead><tr><th>Step</th><th>What happens</th><th>Why it matters</th></tr></thead><tbody>${l.trace.map(r=>`<tr>${r.map(v=>`<td>${esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></section>
+${demoArea}
+<section class="panel"><div class="panel-head"><h2>4. Cost and stability</h2><p>Costs depend on the state space, dimension and problem structure. These are scope labels, not universal benchmarks.</p></div><div class="body"><div class="tiles">${l.complexity.map((x,i)=>`<div class="tile"><span>${['Time','Space','Interpretation'][i]}</span><strong>${esc(x.split(' ').slice(0,2).join(' '))}</strong><small>${esc(x)}</small></div>`).join('')}</div><div class="two" style="margin-top:12px"><div class="mini"><h3>Strengths</h3><p>${esc(l.strength)}</p></div><div class="mini"><h3>Limits</h3><p>${esc(l.limits)}</p></div></div></div></section>
+<section class="panel"><div class="panel-head"><h2>5. Code and usage</h2><p>Reference code is for learning. Real code should use a vetted solver or library.</p></div><div class="code-head"><div><span class="tag">${codeRecord(l)?'Python example':'Concept outline, not executable'}</span> <span class="tag">Editable</span></div><div class="header-actions" style="margin:0"><button class="btn" id="copyCode">Copy code</button><button class="btn" id="downloadCode">Download</button></div></div><textarea id="codeEditor" class="code-editor" spellcheck="false" aria-label="Editable Python code">${esc(code)}</textarea><div class="code-foot"><span>${codeRecord(l)?'Reference example. The in-page lab runs its own JavaScript implementation.':'Lesson-specific outline, not an implementation.'}</span><span id="codeStatus">Local draft</span></div><div class="body"><div class="mini"><h3>Where it is used</h3><p>${esc(l.uses)}</p></div><div class="notice" style="margin-top:12px"><strong>Common pitfall:</strong> ${esc(l.pitfall)}</div></div></section>
+<section class="panel"><div class="panel-head"><h2>6. Choices and alternatives</h2><p>Pick based on the problem structure, dimension and required guarantee</p></div><div class="body two"><div class="mini"><h3>When to use this</h3><p>${esc(l.strength)}</p></div><div class="mini"><h3>When to use something else</h3><p>${esc(l.limits)}</p></div></div></section>
+<section class="panel"><div class="panel-head"><h2>7. Check yourself</h2><p>Try to answer before you open the explanation</p></div><div class="body"><details class="practice"><summary>${esc(l.question)}</summary><p>${esc(l.answer)}</p></details></div></section>
+<section class="panel"><div class="panel-head"><h2>8. References</h2><p>Standard references for this topic</p></div><div class="body">${references}<p class="muted" style="font-size:11.5px;margin-top:14px">The labs on this page are teaching implementations. For production work use OpenSpiel, Petting Zoo, Nashpy, Gambit, or another vetted library.</p></div></section>
+<footer class="footer"><span>Az Game Theory &amp; Social Choice Lab · local learning</span><span>Lesson ${index+1} of ${LESSONS.length} · Next: ${esc(next.title)}</span><button class="btn" id="nextLesson">Next →</button></footer>`;
+
+ $('#bookmarkBtn').onclick=()=>{state.bookmarks.has(id)?state.bookmarks.delete(id):state.bookmarks.add(id);save();renderLesson(id);toast(state.bookmarks.has(id)?'Bookmarked':'Bookmark removed')};
+ $('#completeBtn').onclick=()=>{state.completed.has(id)?state.completed.delete(id):state.completed.add(id);save();renderTree();renderLesson(id);toast(state.completed.has(id)?'Lesson completed':'Completion removed')};
+ $('#nextLesson').onclick=()=>openLesson(next.id);
+ $('#copyCode').onclick=async()=>{const v=$('#codeEditor').value;try{await navigator.clipboard.writeText(v);toast('Code copied')}catch{const ta=$('#codeEditor');ta.select();document.execCommand('copy');toast('Code copied')}};
+ $('#downloadCode').onclick=()=>{const r=codeRecord(l);downloadText(`${id}.${r?'py':'txt'}`,$('#codeEditor').value,r?'text/x-python':'text/plain')};
+ $('#codeEditor').addEventListener('input',()=>{state.drafts[id]=$('#codeEditor').value;save();$('#codeStatus').textContent='Draft saved locally'});
+ if(hasDemo){
+  $('#runLab').onclick=()=>runLab(l);
+  $('#resetSample').onclick=()=>{$('#labInput').value=l.sample||'';$('#labEncoded').textContent='Run the lab to see output.';$('#labDecoded').textContent='Step notes appear here.'};
+  runLab(l,true);
+ }
+ renderTree();save();
+ if(location.hash!==`#${id}`)history.replaceState(null,'',`#${id}`);
+}
+
+function renderHome(){
+ state.page='home';
+ $('#mainView').innerHTML=`<div class="home-hero"><div class="eyebrow">AZ · GAME THEORY TOOLBOOK</div><h1>Understand game search, equilibria and social choice from minimax to AlphaZero.</h1><p>A single-file course covering game foundations, pruning, deep search, heuristic and proof search, combinatorial games, strategic equilibria, game-playing systems, cooperative games, mechanism design, voting and fair division. Every lesson has a plain explanation and most have a runnable lab.</p><div class="header-actions" style="margin:0"><button class="btn primary" id="startFirst">Start at the beginning</button><button class="btn" id="resumeLesson">Continue lesson</button></div></div>
+<div class="stats"><div class="stat"><strong>${CHAPTERS.length}</strong><span>chapters</span></div><div class="stat"><strong>${LESSONS.length}</strong><span>lessons</span></div><div class="stat"><strong>${LESSONS.filter(l=>l.demo&&l.demo!=='none').length}</strong><span>runnable labs</span></div><div class="stat"><strong>1</strong><span>standalone HTML file</span></div></div>
+<section class="panel"><div class="panel-head"><h2>Honest scope</h2><p>One app covers the whole curriculum. Production game-theory software is a separate engineering project.</p></div><div class="body two"><div class="mini"><h3>What runs here</h3><p>Tic-tac-toe state-space counting, exact minimax on any tic-tac-toe position, alpha-beta node-count comparison, move-ordering node reduction, transposition-table savings, UCT bandit simulation, Nim nim-sum, Sprague-Grundy numbers, misère Nim, 2x2 Nash equilibria by support enumeration, regret matching on rock-paper-scissors, Shapley value for weighted voting games, single-item VCG auction, GSP ad auction, top trading cycles, Borda count, Condorcet/Schulze ranking, instant-runoff voting and Adjusted Winner fair division.</p></div><div class="mini"><h3>What does not run here</h3><p>Full production engines (Stockfish), deep RL systems (AlphaZero, MuZero), large-scale poker AI (Libratus, Pluribus), full proof-number search, endgame tablebases, the Lemke-Howson algorithm, nucleolus computation, NSGA-II and Bayesian optimization. For real work use OpenSpiel, Petting Zoo, Nashpy, Gambit, PyGambit, or a vetted solver.</p></div></div></section>
+<div class="panel"><div class="panel-head"><h2>Course map</h2><p>Pick a chapter. The path runs from game foundations to voting and fair division.</p></div><div class="body"><div class="chapter-cards">${CHAPTERS.map((c,i)=>`<button class="chapter-card" data-chapter="${c.id}"><span class="num">CHAPTER ${String(i+1).padStart(2,'0')} · ${c.ids.length} LESSONS</span><strong>${esc(c.title.replace(/^\d+(\.\d+)?\s*/,''))}</strong><p>${esc(c.desc)}</p></button>`).join('')}</div></div></div>
+<footer class="footer"><span>Az Game Search, Game Theory &amp; Social Choice Lab</span><span>Single file · no external runtime dependencies</span></footer>`;
+ $('#startFirst').onclick=()=>openLesson('game-state');
+ $('#resumeLesson').onclick=()=>openLesson(state.current&&byId[state.current]?state.current:'game-state');
+ $('#mainView').querySelectorAll('[data-chapter]').forEach(b=>b.onclick=()=>{const c=CHAPTERS.find(x=>x.id===b.dataset.chapter);if(c)openLesson(c.ids[0])});
+}
+
+function renderProgressPage(){
+ state.page='progress';
+ $('#mainView').innerHTML=`<div class="breadcrumb">Game Theory Lab / Bookmarks & progress</div><header class="header"><div class="eyebrow">LOCAL ONLY</div><h1>Bookmarks and progress</h1><p>Your progress stays in this browser. Export the JSON to move it or keep a backup.</p></header>
+<section class="panel"><div class="panel-head"><h2>Completed lessons</h2></div><div class="body">${state.completed.size?`<div class="references">${[...state.completed].map(id=>`<a href="#${id}" data-open="${id}">${esc(byId[id].title)}</a>`).join('')}</div>`:'<p class="muted">No lessons marked complete yet.</p>'}</div></section>
+<section class="panel"><div class="panel-head"><h2>Bookmarks</h2></div><div class="body">${state.bookmarks.size?`<div class="references">${[...state.bookmarks].map(id=>`<a href="#${id}" data-open="${id}">${esc(byId[id].title)}</a>`).join('')}</div>`:'<p class="muted">No bookmarks yet.</p>'}</div></section>
+<section class="panel"><div class="panel-head"><h2>Progress data</h2></div><div class="body"><div class="header-actions" style="margin:0"><button class="btn primary" id="exportProgress">Export progress JSON</button><button class="btn" id="clearProgress">Clear completion marks</button></div><p class="muted" style="font-size:12.5px;margin-top:14px">Import accepts only known lesson IDs and a supported schema version.</p></div></section>`;
+ $('#mainView').querySelectorAll('[data-open]').forEach(a=>a.onclick=e=>{e.preventDefault();openLesson(a.dataset.open)});
+ $('#exportProgress').onclick=exportProgress;
+ $('#clearProgress').onclick=()=>{if(confirm('Clear all completion marks?')){state.completed.clear();save();renderProgressPage();renderTree();toast('Completion marks cleared')}};
+}
+
+function openLesson(id){if(!byId[id])return;renderLesson(id);renderTree();$('#mainView').focus({preventScroll:true});window.scrollTo(0,0)}
+function downloadText(name,text,type='text/plain'){const blob=new Blob([text],{type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),800)}
+function exportProgress(){downloadText('az-game-theory-lab-progress.json',JSON.stringify({schemaVersion:1,completed:[...state.completed],bookmarks:[...state.bookmarks],theme:state.theme,current:state.current,drafts:state.drafts},null,2),'application/json');toast('Progress exported')}
+function importProgressFile(file){
+ if(file.size>2_000_000){toast('Import rejected: file too large');return}
+ const r=new FileReader();
+ r.onload=()=>{try{
+  const d=JSON.parse(r.result);
+  if(!d||d.schemaVersion!==1||!Array.isArray(d.completed)||!Array.isArray(d.bookmarks)||typeof d.drafts!=='object')throw Error('bad schema');
+  if([...d.completed,...d.bookmarks].some(id=>typeof id!=='string'||!byId[id]))throw Error('unknown id');
+  state.completed=new Set(d.completed);
+  state.bookmarks=new Set(d.bookmarks);
+  state.theme=['system','light','dark'].includes(d.theme)?d.theme:'system';
+  state.current=byId[d.current]?d.current:null;
+  state.drafts=Object.fromEntries(Object.entries(d.drafts).filter(([k,v])=>byId[k]&&typeof v==='string'&&v.length<100000));
+  applyTheme();save();renderTree();
+  state.current?openLesson(state.current):renderHome();
+  toast('Progress imported');
+ }catch(e){toast('Import rejected: invalid progress data')}};
+ r.readAsText(file);
+}
+
+function bindGlobal(){
+ $('#themeSelect').onchange=()=>{state.theme=$('#themeSelect').value;applyTheme();save()};
+ $('#printBtn').onclick=()=>print();
+ $('#exportBtn').onclick=exportProgress;
+ $('#importBtn').onclick=()=>$('#importFile').click();
+ $('#importFile').onchange=e=>{if(e.target.files[0])importProgressFile(e.target.files[0]);e.target.value=''};
+ $('#searchInput').oninput=renderTree;
+ $('#chapterFilter').onchange=renderTree;
+ $('#homeLink').onclick=e=>{e.preventDefault();renderHome();history.replaceState(null,'','#home')};
+ $('#courseTree').onclick=e=>{const b=e.target.closest('[data-lesson]');if(b)openLesson(b.dataset.lesson)};
+ document.querySelectorAll('[data-page="home"]').forEach(b=>b.onclick=renderHome);
+ document.querySelectorAll('[data-page="progress"]').forEach(b=>b.onclick=renderProgressPage);
+ document.addEventListener('keydown',e=>{
+  if(e.key==='/'&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();$('#searchInput').focus()}
+  if(e.key.toLowerCase()==='t'&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){
+   state.theme=state.theme==='dark'?'light':state.theme==='light'?'system':'dark';
+   applyTheme();save();
+  }
+ });
+}
+
+function init(){
+ load();
+ applyTheme();
+ CHAPTERS.forEach(c=>{const op=document.createElement('option');op.value=c.id;op.textContent=c.title;$('#chapterFilter').append(op)});
+ bindGlobal();
+ renderTree();
+ const hash=location.hash.replace(/^#/,'');
+ if(hash&&byId[hash])renderLesson(hash);
+ else if(state.current&&byId[state.current])renderLesson(state.current);
+ else renderHome();
+ progress();
+}
+init();
+</script></body></html>
